@@ -4,7 +4,7 @@ go-graphql is a wrapper for graphql.
 ## Installation
 
 ```bash
-go get -u pkg.tanyudii.me/goql
+go get -u pkg.tanyudii.me/go-pkg/go-graphql
 ```
 
 ## Thanks to:
