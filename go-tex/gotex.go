@@ -3,7 +3,7 @@ package go_tex
 import (
 	"context"
 	"fmt"
-	"pkg.tanyudii.me/goerr"
+	goerr "pkg.tanyudii.me/go-pkg/go-err"
 	"strings"
 )
 

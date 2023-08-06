@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	google.golang.org/grpc v1.57.0
-	pkg.tanyudii.me/goerr v0.0.1
+	pkg.tanyudii.me/go-pkg/go-err v0.0.1
 )
 
 require (
