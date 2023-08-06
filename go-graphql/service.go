@@ -59,21 +59,21 @@ func (s *service) RunGracefully(t int) {
 	mainCtx, cancelMainCtx := context.WithCancel(context.Background())
 	go func() {
 		if err := <-s.RunServers(mainCtx); err != nil {
-			fmt.Printf("goql run servers err: %v\n", err)
+			fmt.Printf("go graphql run servers err: %v\n", err)
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	fmt.Printf("goql is shutting down: for %ds %v\n", t, time.Now())
+	fmt.Printf("go graphql is shutting down: for %ds %v\n", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		fmt.Printf("goql shutdown err: %v\n", err)
+		fmt.Printf("go graphql shutdown err: %v\n", err)
 	}
-	fmt.Printf("gogo shutdown gracefully: %v\n", time.Now())
+	fmt.Printf("go grpc shutdown gracefully: %v\n", time.Now())
 }
 
 func (s *service) RunServers(ctx context.Context) <-chan error {
@@ -87,7 +87,7 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		fmt.Printf("goql Initializing graphQL connection in port %s\n", s.cfg.graphQLPort)
+		fmt.Printf("go graphql Initializing graphQL connection in port %s\n", s.cfg.graphQLPort)
 		exitFunc(s.ListenAndServeGraphQL(ctx))
 	})
 
@@ -129,13 +129,13 @@ func (s *service) ListenAndServeGraphQL(ctx context.Context) (err error) {
 	go func() {
 		<-ctx.Done()
 		if err = srv.Shutdown(context.Background()); err != nil {
-			fmt.Printf("goql listen and serve graphQL: failed to shutdown %v\n", err)
+			fmt.Printf("go graphql listen and serve graphQL: failed to shutdown %v\n", err)
 		}
 	}()
 
-	fmt.Printf("goql listen and serve graphQL: %v\n", s.cfg.graphQLPort)
+	fmt.Printf("go graphql listen and serve graphQL: %v\n", s.cfg.graphQLPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("goql listen and serve graphQL: failed to listen and serve %v", err)
+		fmt.Printf("go graphql listen and serve graphQL: failed to listen and serve %v", err)
 		return err
 	}
 
