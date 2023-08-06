@@ -4,7 +4,7 @@ import "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 const (
 	DefaultGRPCPort           = "5758"
-	DefaultRESTPort           = "1717"
+	DefaultRESTPort           = "8080"
 	DefaultEnableCORS         = true
 	DefaultOnlyJSON           = true
 	DefaultRegisterReflection = true
@@ -22,12 +22,18 @@ type Config struct {
 type ConfigFunc func(c *Config)
 
 func GRPCPort(p string) ConfigFunc {
+	if p == "" {
+		p = DefaultGRPCPort
+	}
 	return func(c *Config) {
 		c.gRPCPort = p
 	}
 }
 
 func RESTPort(p string) ConfigFunc {
+	if p == "" {
+		p = DefaultRESTPort
+	}
 	return func(c *Config) {
 		c.restPort = p
 	}
