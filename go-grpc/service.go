@@ -71,21 +71,21 @@ func (s *service) RunGracefully(t int) {
 	mainCtx, cancelMainCtx := context.WithCancel(context.Background())
 	go func() {
 		if err := <-s.RunServers(mainCtx); err != nil {
-			fmt.Printf("gogo run servers err: %v\n", err)
+			fmt.Printf("go grpc run servers err: %v\n", err)
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	fmt.Printf("gogo is shutting down: for %ds %v\n", t, time.Now())
+	fmt.Printf("go grpc is shutting down: for %ds %v\n", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		fmt.Printf("gogo shutdown err: %v\n", err)
+		fmt.Printf("go grpc shutdown err: %v\n", err)
 	}
-	fmt.Printf("gogo shutdown gracefully: %v\n", time.Now())
+	fmt.Printf("go grpc shutdown gracefully: %v\n", time.Now())
 }
 
 func (s *service) RunServers(ctx context.Context) <-chan error {
@@ -99,12 +99,12 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		fmt.Printf("gogo Initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
+		fmt.Printf("go grpc Initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
 		exitFunc(s.ListenAndServeGRPC(ctx))
 	})
 
 	go wg.Wrap(func() {
-		fmt.Printf("gogo Initializing HTTP connection in port %s", s.cfg.restPort)
+		fmt.Printf("go grpc Initializing HTTP connection in port %s", s.cfg.restPort)
 		exitFunc(s.ListenAndServeREST(ctx))
 	})
 
@@ -115,7 +115,7 @@ func (s *service) ListenAndServeGRPC(_ context.Context) error {
 	if s.server == nil {
 		return ErrServerNotInitialized
 	}
-	fmt.Printf("gogo listen and serve grpc: %v\n", s.cfg.gRPCPort)
+	fmt.Printf("go grpc listen and serve grpc: %v\n", s.cfg.gRPCPort)
 
 	defer s.server.GracefulStop()
 	lis, err := net.Listen("tcp", ":"+s.cfg.gRPCPort)
@@ -152,13 +152,13 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		if err = srv.Shutdown(context.Background()); err != nil {
-			fmt.Printf("gogo listen and serve rest: failed to shutdown %v\n", err)
+			fmt.Printf("go grpc listen and serve rest: failed to shutdown %v\n", err)
 		}
 	}()
 
-	fmt.Printf("gogo listen and serve rest: %v\n", s.cfg.restPort)
+	fmt.Printf("go grpc listen and serve rest: %v\n", s.cfg.restPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("gogo listen and serve rest: failed to listen and serve %v", err)
+		fmt.Printf("go grpc listen and serve rest: failed to listen and serve %v", err)
 		return err
 	}
 
