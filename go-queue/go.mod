@@ -2,7 +2,10 @@ module pkg.tanyudii.me/go-pkg/go-queue
 
 go 1.20
 
-require github.com/vmihailenco/taskq/v3 v3.2.9
+require (
+	github.com/vmihailenco/taskq/v3 v3.2.9
+	pkg.tanyudii.me/go-pkg/go-logger v0.0.1
+)
 
 require (
 	github.com/bsm/redislock v0.7.2 // indirect
@@ -13,6 +16,8 @@ require (
 	github.com/go-redis/redis_rate/v9 v9.1.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/klauspost/compress v1.15.1 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
 )

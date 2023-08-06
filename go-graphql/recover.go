@@ -3,8 +3,8 @@ package go_graphql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	"runtime/debug"
 )
 
@@ -12,6 +12,6 @@ func Recover(_ context.Context, err interface{}) error {
 	if _, ok := err.(error); !ok {
 		err = errors.New("unexpected error happened")
 	}
-	fmt.Printf("panic recovered: %v; stacktrace: %s\n", err, string(debug.Stack()))
+	gologger.WithField("stacktrace", string(debug.Stack())).Errorf("panic recovered: %v", err)
 	return gqlerror.Errorf("internal system error")
 }

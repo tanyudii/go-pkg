@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	gotex "pkg.tanyudii.me/go-pkg/go-tex"
 	"runtime/debug"
 	"strings"
@@ -18,7 +19,7 @@ func RecoveryUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		defer func() {
 			if r := recover(); r != nil {
 				err = status.Errorf(codes.Unknown, "unexpected error happened")
-				fmt.Printf("panic recovered: %v; stacktrace: %s\n", r, string(debug.Stack()))
+				gologger.WithField("stacktrace", string(debug.Stack())).Errorf("panic recovered: %v", r)
 			}
 		}()
 		return handler(ctx, req)

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	"sync"
 	"syscall"
 	"time"
@@ -71,21 +72,21 @@ func (s *service) RunGracefully(t int) {
 	mainCtx, cancelMainCtx := context.WithCancel(context.Background())
 	go func() {
 		if err := <-s.RunServers(mainCtx); err != nil {
-			fmt.Printf("go grpc run servers err: %v\n", err)
+			gologger.Fatal(err)
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	fmt.Printf("go grpc is shutting down: for %ds %v\n", t, time.Now())
+	gologger.Infof("go grpc is shutting down: for %ds %v\n", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		fmt.Printf("go grpc shutdown err: %v\n", err)
+		gologger.Fatalf("go grpc shutdown err: %v\n", err)
 	}
-	fmt.Printf("go grpc shutdown gracefully: %v\n", time.Now())
+	gologger.Infof("go grpc shutdown gracefully: %v\n", time.Now())
 }
 
 func (s *service) RunServers(ctx context.Context) <-chan error {
@@ -99,12 +100,12 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		fmt.Printf("go grpc initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
+		gologger.Infof("go grpc initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
 		exitFunc(s.ListenAndServeGRPC(ctx))
 	})
 
 	go wg.Wrap(func() {
-		fmt.Printf("go grpc initializing HTTP connection in port %s\n", s.cfg.restPort)
+		gologger.Infof("go grpc initializing HTTP connection in port %s\n", s.cfg.restPort)
 		exitFunc(s.ListenAndServeREST(ctx))
 	})
 
@@ -115,7 +116,7 @@ func (s *service) ListenAndServeGRPC(_ context.Context) error {
 	if s.server == nil {
 		return ErrServerNotInitialized
 	}
-	fmt.Printf("go grpc listen and serve grpc: %v\n", s.cfg.gRPCPort)
+	gologger.Infof("go grpc listen and serve grpc: %v\n", s.cfg.gRPCPort)
 
 	defer s.server.GracefulStop()
 	lis, err := net.Listen("tcp", ":"+s.cfg.gRPCPort)
@@ -152,13 +153,13 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		if err = srv.Shutdown(context.Background()); err != nil {
-			fmt.Printf("go grpc listen and serve rest: failed to shutdown %v\n", err)
+			gologger.Errorf("go grpc listen and serve rest: failed to shutdown %v\n", err)
 		}
 	}()
 
-	fmt.Printf("go grpc listen and serve rest: %v\n", s.cfg.restPort)
+	gologger.Infof("go grpc listen and serve rest: %v\n", s.cfg.restPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("go grpc listen and serve rest: failed to listen and serve %v\n", err)
+		gologger.Errorf("go grpc listen and serve rest: failed to listen and serve %v\n", err)
 		return err
 	}
 
@@ -194,7 +195,7 @@ func (s *service) initConfigRestServeMuxOpts() {
 }
 
 func (s *service) initGRPCServer() {
-	s.server = grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(s.interceptors.serverUnary...)))
+	s.server = grpc.NewServer(grpc.UnaryInterceptor(grpcmiddleware.ChainUnaryServer(s.interceptors.serverUnary...)))
 }
 
 func (s *service) initReflection() {

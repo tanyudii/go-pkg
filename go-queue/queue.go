@@ -2,10 +2,10 @@ package go_queue
 
 import (
 	"context"
-	"fmt"
 	"github.com/vmihailenco/taskq/v3"
 	"os"
 	"os/signal"
+	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	"syscall"
 	"time"
 )
@@ -46,21 +46,21 @@ func (s *service) RunGracefully(t int) {
 	mainCtx, cancelMainCtx := context.WithCancel(context.Background())
 	go func() {
 		if err := s.queue.Consumer().Start(mainCtx); err != nil {
-			fmt.Printf("go queue consumer err: %v\n", err)
+			gologger.Fatal(err)
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	fmt.Printf("go queue is shutting down: for %ds %v\n", t, time.Now())
+	gologger.Infof("go queue is shutting down: for %ds %v\n", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		fmt.Printf("go queue shutdown err: %v\n", err)
+		gologger.Fatalf("go queue shutdown err: %v\n", err)
 	}
-	fmt.Printf("go queue shutdown completed: %v\n", time.Now())
+	gologger.Infof("go queue shutdown completed: %v\n", time.Now())
 }
 
 func (s *service) GetQueue() taskq.Queue {

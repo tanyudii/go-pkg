@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/vektah/gqlparser/v2 v2.5.8
 	pkg.tanyudii.me/go-pkg/go-err v0.0.1
+	pkg.tanyudii.me/go-pkg/go-logger v0.0.1
 	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )
 
@@ -34,12 +35,13 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/net v0.13.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/grpc v1.57.0 // indirect
