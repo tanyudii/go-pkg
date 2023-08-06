@@ -23,18 +23,27 @@ type Config struct {
 type ConfigFunc func(c *Config)
 
 func GraphQLPort(p string) ConfigFunc {
+	if p == "" {
+		p = DefaultGraphQLPort
+	}
 	return func(c *Config) {
 		c.graphQLPort = p
 	}
 }
 
 func GraphQLPath(p string) ConfigFunc {
+	if p == "" {
+		p = DefaultGraphQLPath
+	}
 	return func(c *Config) {
 		c.graphQLPath = p
 	}
 }
 
 func PlaygroundPath(p string) ConfigFunc {
+	if p == "" {
+		p = DefaultPlaygroundPath
+	}
 	return func(c *Config) {
 		c.playgroundPath = p
 	}
