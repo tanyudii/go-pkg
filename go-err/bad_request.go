@@ -110,11 +110,10 @@ func NewBadRequestErrorUsingFieldsOrNil(fields ErrorField) error {
 		return nil
 	}
 	firstErr, otherErr := fields.GetFirstErrorAndOtherTotal()
-	wordErr := "error"
-	if otherErr > 1 {
-		wordErr = "errors"
+	if otherErr >= 1 {
+		return NewBadRequestErrorWithFields(fmt.Sprintf("%s. and there are %d errors", firstErr, otherErr), fields)
 	}
-	return NewBadRequestErrorWithFields(fmt.Sprintf("%s. and there are %d %s", firstErr, otherErr, wordErr), fields)
+	return NewBadRequestErrorWithFields(firstErr, fields)
 }
 
 func IsBadRequestErrorGRPC(err error) bool {
