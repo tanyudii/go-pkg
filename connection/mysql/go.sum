@@ -33,3 +33,5 @@ pkg.tanyudii.me/go-pkg/go-logger v0.0.1 h1:vyVYVCTEWTlg3Smq7KNSP0omCs8UlTOKfo3gY
 pkg.tanyudii.me/go-pkg/go-logger v0.0.1/go.mod h1:cQYz9Q3z0+RoUeaumqD2gDY3xQA0bU98nJsbEwU9/Lk=
 pkg.tanyudii.me/go-pkg/go-mon v0.0.4 h1:gNCUV4LQH2RyPjkJ+sOoCiR+BbGFd+geeqtHuAPJOvE=
 pkg.tanyudii.me/go-pkg/go-mon v0.0.4/go.mod h1:UtLTVQBYxcGNMMO2x8cEmLax3B7z83pQ0WhZnabo2Qg=
+pkg.tanyudii.me/go-pkg/go-mon v0.0.5 h1:YiwFuxdFC5Gs0SqVt1QChGoFoXqX6IZXi8R2anAaJZA=
+pkg.tanyudii.me/go-pkg/go-mon v0.0.5/go.mod h1:OjFCshb40QR83DavyD+Ms0gI4zbiV9rv1QayfeWri0Q=
