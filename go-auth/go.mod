@@ -6,11 +6,11 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	google.golang.org/grpc v1.57.0
 	pkg.tanyudii.me/go-pkg/go-err v0.0.1
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.1
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )
 
 require (
-	github.com/bytedance/sonic v1.9.1 // indirect
+	github.com/bytedance/sonic v1.9.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -36,5 +36,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	pkg.tanyudii.me/goerr v0.0.1 // indirect
 )
