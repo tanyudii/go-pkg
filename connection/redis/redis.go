@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/kelseyhightower/envconfig"
-	"pkg.tanyudii.me/go-pkg/go-mon/logger"
+	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	"strings"
 )
 
@@ -49,6 +49,6 @@ func Connect(name ...string) *redis.Client {
 
 func Close(cli *redis.Client) {
 	if err := cli.Close(); err != nil {
-		logger.Fatalf("failed close connection redis: %v", err)
+		gologger.Fatalf("failed close connection redis: %v", err)
 	}
 }

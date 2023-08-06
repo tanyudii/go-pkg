@@ -6,7 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	gormlog "gorm.io/gorm/logger"
-	"pkg.tanyudii.me/go-pkg/go-mon/logger"
+	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	"strings"
 	"time"
 )
@@ -54,7 +54,7 @@ func (c *config) connect() *gorm.DB {
 		DefaultStringSize: c.DefaultStringSize,
 	}), gormConfig)
 	if err != nil {
-		logger.Fatalf("failed create connection to database: %v", err)
+		gologger.Fatalf("failed create connection to database: %v", err)
 		return nil
 	}
 
@@ -81,7 +81,7 @@ func Connect(name ...string) *gorm.DB {
 	cfg := &config{}
 	envconfig.MustProcess(prefix, cfg)
 	if len(name) > 0 && !strings.EqualFold(cfg.Database, prefix) {
-		logger.Panicf("database must be same with name: %s", name[0])
+		gologger.Panicf("database must be same with name: %s", name[0])
 	}
 
 	cfg.connect()
@@ -92,10 +92,10 @@ func Connect(name ...string) *gorm.DB {
 func Close(db *gorm.DB) {
 	dbSQL, err := db.DB()
 	if err != nil {
-		logger.Fatalf("failed close connection database: %v", err)
+		gologger.Fatalf("failed close connection database: %v", err)
 		return
 	}
 	if err = dbSQL.Close(); err != nil {
-		logger.Fatalf("failed close connection database: %v", err)
+		gologger.Fatalf("failed close connection database: %v", err)
 	}
 }
