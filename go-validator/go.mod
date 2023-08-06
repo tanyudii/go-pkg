@@ -8,7 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/iancoleman/strcase v0.3.0
 	pkg.tanyudii.me/go-pkg/go-err v0.0.1
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.1
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )
 
 require (
@@ -22,5 +22,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/grpc v1.57.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
-	pkg.tanyudii.me/goerr v0.0.1 // indirect
 )
