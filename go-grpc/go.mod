@@ -9,7 +9,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.2
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.1
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )
 
 require (
@@ -40,5 +40,5 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20230726155614-23370e0ffb3e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	pkg.tanyudii.me/goerr v0.0.1 // indirect
+	pkg.tanyudii.me/go-pkg/go-err v0.0.1 // indirect
 )

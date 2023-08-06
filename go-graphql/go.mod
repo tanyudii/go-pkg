@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/vektah/gqlparser/v2 v2.5.8
 	pkg.tanyudii.me/go-pkg/go-err v0.0.1
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.1
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )
 
 require (
@@ -46,5 +46,4 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	pkg.tanyudii.me/goerr v0.0.1 // indirect
 )
