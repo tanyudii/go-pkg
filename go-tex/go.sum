@@ -17,3 +17,5 @@ google.golang.org/protobuf v1.31.0 h1:g0LDEJHgrBl9N9r17Ru3sqWhkIx2NB67okBHPwC7hs
 google.golang.org/protobuf v1.31.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 pkg.tanyudii.me/go-pkg/go-err v0.0.1 h1:/rZiUbduOrKy3cgavSAloj/2d8rhGZ7tuz8w55hTOfE=
 pkg.tanyudii.me/go-pkg/go-err v0.0.1/go.mod h1:tfYy2m3+tAjfQDuxJVBrda9/diqt8+uI8mvsWSbibds=
+pkg.tanyudii.me/go-pkg/go-err v0.0.2 h1:C7pPOozD63ZZplWAAD2clLWDVAHkH8JHD0D9RzHins4=
+pkg.tanyudii.me/go-pkg/go-err v0.0.2/go.mod h1:tfYy2m3+tAjfQDuxJVBrda9/diqt8+uI8mvsWSbibds=

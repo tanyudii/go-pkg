@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0
 	github.com/vektah/gqlparser/v2 v2.5.8
-	pkg.tanyudii.me/go-pkg/go-err v0.0.1
+	pkg.tanyudii.me/go-pkg/go-err v0.0.2
 	pkg.tanyudii.me/go-pkg/go-logger v0.0.1
 	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )

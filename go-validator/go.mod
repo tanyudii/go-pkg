@@ -7,7 +7,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/iancoleman/strcase v0.3.0
-	pkg.tanyudii.me/go-pkg/go-err v0.0.1
+	pkg.tanyudii.me/go-pkg/go-err v0.0.2
 	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
 )
 
