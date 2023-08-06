@@ -99,12 +99,12 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		fmt.Printf("go grpc Initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
+		fmt.Printf("go grpc initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
 		exitFunc(s.ListenAndServeGRPC(ctx))
 	})
 
 	go wg.Wrap(func() {
-		fmt.Printf("go grpc Initializing HTTP connection in port %s\n", s.cfg.restPort)
+		fmt.Printf("go grpc initializing HTTP connection in port %s\n", s.cfg.restPort)
 		exitFunc(s.ListenAndServeREST(ctx))
 	})
 

@@ -87,7 +87,7 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		fmt.Printf("go graphql Initializing graphQL connection in port %s\n", s.cfg.graphQLPort)
+		fmt.Printf("go graphql initializing graphQL connection in port %s\n", s.cfg.graphQLPort)
 		exitFunc(s.ListenAndServeGraphQL(ctx))
 	})
 
