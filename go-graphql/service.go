@@ -135,7 +135,7 @@ func (s *service) ListenAndServeGraphQL(ctx context.Context) (err error) {
 
 	fmt.Printf("go graphql listen and serve graphQL: %v\n", s.cfg.graphQLPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("go graphql listen and serve graphQL: failed to listen and serve %v", err)
+		fmt.Printf("go graphql listen and serve graphQL: failed to listen and serve %v\n", err)
 		return err
 	}
 

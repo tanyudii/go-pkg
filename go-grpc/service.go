@@ -104,7 +104,7 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	})
 
 	go wg.Wrap(func() {
-		fmt.Printf("go grpc Initializing HTTP connection in port %s", s.cfg.restPort)
+		fmt.Printf("go grpc Initializing HTTP connection in port %s\n", s.cfg.restPort)
 		exitFunc(s.ListenAndServeREST(ctx))
 	})
 
@@ -158,7 +158,7 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 
 	fmt.Printf("go grpc listen and serve rest: %v\n", s.cfg.restPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		fmt.Printf("go grpc listen and serve rest: failed to listen and serve %v", err)
+		fmt.Printf("go grpc listen and serve rest: failed to listen and serve %v\n", err)
 		return err
 	}
 
