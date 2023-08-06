@@ -6,6 +6,7 @@ All needs of my projects in here :)
 * [go-err](https://github.com/tanyudii/go-pkg/blob/main/go-err/README.md) - go-err is a error custom handling.
 * [go-graphql](https://github.com/tanyudii/go-pkg/blob/main/go-graphql/README.md) - go-graphql is a wrapper for graphql.
 * [go-grpc](https://github.com/tanyudii/go-pkg/blob/main/go-grpc/README.md) - go-grpc is a wrapper for grpc gateway.
+* [go-logger](https://github.com/tanyudii/go-pkg/blob/main/go-logger/README.md) - go-logger is a wrapper for logrus.
 * [go-mon](https://github.com/tanyudii/go-pkg/blob/main/go-mon/README.md) - go-mon is a common helper function.
 * [go-queue](https://github.com/tanyudii/go-pkg/blob/main/go-queue/README.md) - go-queue is a wrapper for queue.
 * [go-tex](https://github.com/tanyudii/go-pkg/blob/main/go-tex/README.md) - go-tex is handling session context using GRPC MD.
