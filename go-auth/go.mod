@@ -6,7 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	google.golang.org/grpc v1.57.0
 	pkg.tanyudii.me/go-pkg/go-err v0.0.2
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.3
 )
 
 require (

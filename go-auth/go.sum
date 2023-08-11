@@ -88,10 +88,8 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-pkg.tanyudii.me/go-pkg/go-err v0.0.1 h1:/rZiUbduOrKy3cgavSAloj/2d8rhGZ7tuz8w55hTOfE=
-pkg.tanyudii.me/go-pkg/go-err v0.0.1/go.mod h1:tfYy2m3+tAjfQDuxJVBrda9/diqt8+uI8mvsWSbibds=
 pkg.tanyudii.me/go-pkg/go-err v0.0.2 h1:C7pPOozD63ZZplWAAD2clLWDVAHkH8JHD0D9RzHins4=
 pkg.tanyudii.me/go-pkg/go-err v0.0.2/go.mod h1:tfYy2m3+tAjfQDuxJVBrda9/diqt8+uI8mvsWSbibds=
-pkg.tanyudii.me/go-pkg/go-tex v0.0.2 h1:P6hVlFBBCQHf/nrhIxNL6JJY3fKjjo8+9eQnVQCYKJw=
-pkg.tanyudii.me/go-pkg/go-tex v0.0.2/go.mod h1:A/BHjRujApnqtyJosTEtaH02Vl4IrWxnlk8JOMHCPTA=
+pkg.tanyudii.me/go-pkg/go-tex v0.0.3 h1:zv7nS7qmJ8aDkzm09c2xYh/fE44XipAimCXj8tM3P8A=
+pkg.tanyudii.me/go-pkg/go-tex v0.0.3/go.mod h1:3F5ZyX9eBClZl2qQxSqIEbO1kFvrrUvcGHGjaSESCqg=
 rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=

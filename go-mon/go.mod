@@ -6,7 +6,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	golang.org/x/crypto v0.11.0
 	google.golang.org/protobuf v1.31.0
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.2
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.3
 )
 
 require (
