@@ -53,14 +53,14 @@ func (s *service) RunGracefully(t int) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	gologger.Infof("go queue is shutting down: for %ds %v\n", t, time.Now())
+	gologger.Infof("go queue is shutting down: for %ds %v", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		gologger.Fatalf("go queue shutdown err: %v\n", err)
+		gologger.Fatalf("go queue shutdown err: %v", err)
 	}
-	gologger.Infof("go queue shutdown completed: %v\n", time.Now())
+	gologger.Infof("go queue shutdown completed: %v", time.Now())
 }
 
 func (s *service) GetQueue() taskq.Queue {

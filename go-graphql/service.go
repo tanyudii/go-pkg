@@ -66,14 +66,14 @@ func (s *service) RunGracefully(t int) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	gologger.Infof("go graphql is shutting down: for %ds %v\n", t, time.Now())
+	gologger.Infof("go graphql is shutting down: for %ds %v", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		gologger.Fatalf("go graphql shutdown err: %v\n", err)
+		gologger.Fatalf("go graphql shutdown err: %v", err)
 	}
-	gologger.Infof("go grpc shutdown gracefully: %v\n", time.Now())
+	gologger.Infof("go grpc shutdown gracefully: %v", time.Now())
 }
 
 func (s *service) RunServers(ctx context.Context) <-chan error {
@@ -87,7 +87,7 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		gologger.Infof("go graphql initializing graphQL connection in port %s\n", s.cfg.graphQLPort)
+		gologger.Infof("go graphql initializing graphQL connection in port %s", s.cfg.graphQLPort)
 		exitFunc(s.ListenAndServeGraphQL(ctx))
 	})
 
@@ -129,13 +129,13 @@ func (s *service) ListenAndServeGraphQL(ctx context.Context) (err error) {
 	go func() {
 		<-ctx.Done()
 		if err = srv.Shutdown(context.Background()); err != nil {
-			gologger.Errorf("go graphql listen and serve graphQL: failed to shutdown %v\n", err)
+			gologger.Errorf("go graphql listen and serve graphQL: failed to shutdown %v", err)
 		}
 	}()
 
-	gologger.Infof("go graphql listen and serve graphQL: %v\n", s.cfg.graphQLPort)
+	gologger.Infof("go graphql listen and serve graphQL: %v", s.cfg.graphQLPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		gologger.Errorf("go graphql listen and serve graphQL: failed to listen and serve %v\n", err)
+		gologger.Errorf("go graphql listen and serve graphQL: failed to listen and serve %v", err)
 		return err
 	}
 

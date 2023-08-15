@@ -79,14 +79,14 @@ func (s *service) RunGracefully(t int) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	gologger.Infof("go grpc is shutting down: for %ds %v\n", t, time.Now())
+	gologger.Infof("go grpc is shutting down: for %ds %v", t, time.Now())
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(t)*time.Second)
 	defer cancel()
 	cancelMainCtx()
 	if err := s.Shutdown(ctx); err != nil {
-		gologger.Fatalf("go grpc shutdown err: %v\n", err)
+		gologger.Fatalf("go grpc shutdown err: %v", err)
 	}
-	gologger.Infof("go grpc shutdown gracefully: %v\n", time.Now())
+	gologger.Infof("go grpc shutdown gracefully: %v", time.Now())
 }
 
 func (s *service) RunServers(ctx context.Context) <-chan error {
@@ -100,12 +100,12 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	}
 
 	go wg.Wrap(func() {
-		gologger.Infof("go grpc initializing gRPC connection in port %s\n", s.cfg.gRPCPort)
+		gologger.Infof("go grpc initializing gRPC connection in port %s", s.cfg.gRPCPort)
 		exitFunc(s.ListenAndServeGRPC(ctx))
 	})
 
 	go wg.Wrap(func() {
-		gologger.Infof("go grpc initializing HTTP connection in port %s\n", s.cfg.restPort)
+		gologger.Infof("go grpc initializing HTTP connection in port %s", s.cfg.restPort)
 		exitFunc(s.ListenAndServeREST(ctx))
 	})
 
@@ -116,7 +116,7 @@ func (s *service) ListenAndServeGRPC(_ context.Context) error {
 	if s.server == nil {
 		return ErrServerNotInitialized
 	}
-	gologger.Infof("go grpc listen and serve grpc: %v\n", s.cfg.gRPCPort)
+	gologger.Infof("go grpc listen and serve grpc: %v", s.cfg.gRPCPort)
 
 	defer s.server.GracefulStop()
 	lis, err := net.Listen("tcp", ":"+s.cfg.gRPCPort)
@@ -153,13 +153,13 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		if err = srv.Shutdown(context.Background()); err != nil {
-			gologger.Errorf("go grpc listen and serve rest: failed to shutdown %v\n", err)
+			gologger.Errorf("go grpc listen and serve rest: failed to shutdown %v", err)
 		}
 	}()
 
-	gologger.Infof("go grpc listen and serve rest: %v\n", s.cfg.restPort)
+	gologger.Infof("go grpc listen and serve rest: %v", s.cfg.restPort)
 	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		gologger.Errorf("go grpc listen and serve rest: failed to listen and serve %v\n", err)
+		gologger.Errorf("go grpc listen and serve rest: failed to listen and serve %v", err)
 		return err
 	}
 
