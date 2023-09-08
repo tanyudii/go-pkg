@@ -7,7 +7,7 @@ require (
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.2
 	pkg.tanyudii.me/go-pkg/go-logger v0.0.1
-	pkg.tanyudii.me/go-pkg/go-mon v0.0.6
+	pkg.tanyudii.me/go-pkg/go-mon v0.0.7
 )
 
 require (
