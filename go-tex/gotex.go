@@ -34,7 +34,6 @@ const (
 
 	ScopeSeparator      = " "
 	PermissionSeparator = ";"
-	UserTypeSeparator   = ";"
 )
 
 type Gotex struct {
@@ -170,6 +169,7 @@ func FromContextWithErr(ctx context.Context) (*Gotex, error) {
 func ParseToGrpcCtx(ctx context.Context, pwd ...string) context.Context {
 	if r, ok := FromContext(ctx); ok {
 		newCtx := FromIncoming(ctx)
+		internalPwd := append([]string{r.InternalCallPassword}, pwd...)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyUserID), r.UserID)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyUserName), r.UserName)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyUserEmail), r.UserEmail)
@@ -180,7 +180,7 @@ func ParseToGrpcCtx(ctx context.Context, pwd ...string) context.Context {
 		newCtx.Add(strings.ToLower(RequestHeaderKeyClientID), r.ClientID)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyClientName), r.ClientName)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyScopes), r.Scopes)
-		newCtx.Add(strings.ToLower(RequestHeaderKeyInternalCallPassword), firstOrDefault(pwd...))
+		newCtx.Add(strings.ToLower(RequestHeaderKeyInternalCallPassword), firstOrDefault(internalPwd...))
 		newCtx.Add(strings.ToLower(RequestHeaderKeyAuthorization), r.Authorization)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyRequestID), r.RequestID)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyAcceptLanguage), r.AcceptLanguage)
