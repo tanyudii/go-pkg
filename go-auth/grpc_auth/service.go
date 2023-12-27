@@ -4,13 +4,8 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	goauth "pkg.tanyudii.me/go-pkg/go-auth"
-	goerr "pkg.tanyudii.me/go-pkg/go-err"
 	gotex "pkg.tanyudii.me/go-pkg/go-tex"
 	"strings"
-)
-
-var (
-	ErrUnauthenticated = goerr.NewUnauthenticatedErrorWithName("unauthenticated", "UNAUTHENTICATED")
 )
 
 type service struct {
@@ -56,11 +51,11 @@ func (s *service) authenticateBearer(ctx context.Context) (context.Context, erro
 	md := gotex.FromIncoming(ctx)
 	token := md.Get(strings.ToLower(gotex.RequestHeaderKeyAuthorization))
 	if token == "" {
-		return nil, ErrUnauthenticated
+		return nil, goauth.ErrUnauthenticated
 	}
 	splitToken := strings.Split(token, "Bearer ")
 	if len(splitToken) != 2 {
-		return nil, ErrUnauthenticated
+		return nil, goauth.ErrUnauthenticated
 	}
 	respToken, err := s.tokenService.TokenInfo(context.Background(), splitToken[1])
 	if err != nil {

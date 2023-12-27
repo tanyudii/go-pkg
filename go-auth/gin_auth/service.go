@@ -6,13 +6,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	goauth "pkg.tanyudii.me/go-pkg/go-auth"
-	goerr "pkg.tanyudii.me/go-pkg/go-err"
 	gotex "pkg.tanyudii.me/go-pkg/go-tex"
 	"strings"
-)
-
-var (
-	ErrUnauthenticated = goerr.NewUnauthenticatedErrorWithName("unauthenticated", "UNAUTHENTICATED")
 )
 
 type Service interface {
@@ -53,7 +48,7 @@ func (s *service) authenticate(c *gin.Context) (context.Context, error) {
 	if err != nil {
 		// skip when is graphqlMode
 		// GraphQL will validate on resolver
-		if errors.Is(err, ErrUnauthenticated) && s.cfg.graphqlMode {
+		if errors.Is(err, goauth.ErrUnauthenticated) && s.cfg.graphqlMode {
 			return c, nil
 		}
 		return nil, err
@@ -65,11 +60,11 @@ func (s *service) authenticate(c *gin.Context) (context.Context, error) {
 func (s *service) authenticateBearer(c *gin.Context) (context.Context, error) {
 	token := c.GetHeader("Authorization")
 	if token == "" {
-		return nil, ErrUnauthenticated
+		return nil, goauth.ErrUnauthenticated
 	}
 	splitToken := strings.Split(token, "Bearer ")
 	if len(splitToken) != 2 {
-		return nil, ErrUnauthenticated
+		return nil, goauth.ErrUnauthenticated
 	}
 	respToken, err := s.tokenService.TokenInfo(context.Background(), splitToken[1])
 	if err != nil {
