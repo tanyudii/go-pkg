@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: go-pkg
+  annotations:
+    github.com/project-slug: tanyudii/go-pkg
+spec:
+  type: other
+  lifecycle: unknown
+  owner: Yudi Hertanto
