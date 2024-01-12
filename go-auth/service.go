@@ -43,6 +43,9 @@ func (s *service) Authenticate(ctx context.Context, fullMethod string) (context.
 		routePermissions = append(routePermissions, routeConfig.GetPermissions()...)
 		routeScopes = append(routeScopes, routeConfig.GetScopes()...)
 	}
+	if err = s.checkRouterPermission(ctx, fullMethod); err != nil {
+		return nil, err
+	}
 
 	//if user authorized with type, will be skip other middleware
 	ok, err := s.authorizedUserType(session, routeUserTypes)
@@ -83,9 +86,16 @@ func (s *service) authorizedScope(session *gotex.Gotex, scopes []string) error {
 	return err
 }
 
-func (s *service) getRouteConfig(ctx context.Context, fullMethod string) (RouteConfig, error) {
+func (s *service) getRouteConfig(ctx context.Context, fm string) (RouteConfig, error) {
 	if s.cfg.routeService == nil {
 		return nil, nil
 	}
-	return s.cfg.routeService.GetRouteConfig(ctx, fullMethod)
+	return s.cfg.routeService.GetRouteConfig(ctx, fm)
+}
+
+func (s *service) checkRouterPermission(ctx context.Context, fm string) error {
+	if s.cfg.routeService == nil {
+		return nil
+	}
+	return s.cfg.routeService.CheckRoutePermission(ctx, fm)
 }
