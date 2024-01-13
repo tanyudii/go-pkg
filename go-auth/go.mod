@@ -4,9 +4,9 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	google.golang.org/grpc v1.57.0
+	google.golang.org/grpc v1.60.1
 	pkg.tanyudii.me/go-pkg/go-err v0.0.2
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.3
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.4
 )
 
 require (
@@ -29,11 +29,11 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/net v0.13.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
+	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
