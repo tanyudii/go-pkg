@@ -43,9 +43,6 @@ func (s *service) Authenticate(ctx context.Context, fullMethod string) (context.
 		routePermissions = append(routePermissions, routeConfig.GetPermissions()...)
 		routeScopes = append(routeScopes, routeConfig.GetScopes()...)
 	}
-	if err = s.checkRouterPermission(ctx, fullMethod); err != nil {
-		return nil, err
-	}
 
 	//if user authorized with type, will be skip other middleware
 	ok, err := s.authorizedUserType(session, routeUserTypes)
@@ -60,6 +57,10 @@ func (s *service) Authenticate(ctx context.Context, fullMethod string) (context.
 	}
 
 	if err = s.authorizedScope(session, routeScopes); err != nil {
+		return nil, goerr.NewUnauthorizedError(err.Error())
+	}
+
+	if err = s.checkRouterPermission(ctx, fullMethod); err != nil {
 		return nil, goerr.NewUnauthorizedError(err.Error())
 	}
 
