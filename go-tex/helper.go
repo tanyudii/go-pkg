@@ -69,12 +69,14 @@ func CreateGRPCContextDummy(ctx context.Context) context.Context {
 	return ParseToGrpcCtx(NewContext(ctx, eCtxDummy))
 }
 
-func firstOrDefault[T any](v ...T) T {
-	if len(v) != 0 {
-		return v[0]
+func firstOrDefault[T comparable](args ...T) T {
+	var zero T
+	for _, a := range args {
+		if a != zero {
+			return a
+		}
 	}
-	var dfl T
-	return dfl
+	return zero
 }
 
 func splitString(s string, sep string) []string {
