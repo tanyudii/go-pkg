@@ -39,9 +39,9 @@ func (p *Pagination) Validate() *Pagination {
 	return p
 }
 
-func (p *Pagination) SetPagination(total ...int) {
+func (p *Pagination) SetPagination(total ...int64) {
 	if len(total) != 0 {
-		p.Total = int64(total[0])
+		p.Total = total[0]
 	}
 	if p.Total == 0 {
 		return
