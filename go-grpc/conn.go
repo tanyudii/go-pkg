@@ -2,9 +2,10 @@ package go_grpc
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
 
 var (
@@ -27,7 +28,7 @@ func ClientConn(addr string) grpc.ClientConnInterface {
 
 func getDialOpts() []grpc.DialOption {
 	return []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})),
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(defaultMaxCallRcvMsgSize),
 			grpc.MaxCallSendMsgSize(defaultMaxCallSendMsgSize),
