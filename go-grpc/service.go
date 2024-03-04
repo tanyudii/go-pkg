@@ -2,6 +2,7 @@ package go_grpc
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"net"
 	"net/http"
@@ -215,7 +216,12 @@ func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	}
 
 	endpoint := ":" + s.cfg.gRPCPort
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(
+			credentials.NewTLS(&tls.Config{}),
+		),
+	}
+
 	for i := range s.restHandlers {
 		h := s.restHandlers[i]
 		if err := h(ctx, mux, endpoint, opts); err != nil {
