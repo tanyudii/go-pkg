@@ -16,6 +16,7 @@ type Config struct {
 	enableCORS         bool
 	onlyJSON           bool
 	registerReflection bool
+	tls                bool
 	restServeMuxOpts   []runtime.ServeMuxOption
 }
 
@@ -54,6 +55,12 @@ func OnlyJSON(j bool) ConfigFunc {
 func RegisterReflection(r bool) ConfigFunc {
 	return func(c *Config) {
 		c.registerReflection = r
+	}
+}
+
+func WithTLS(tls bool) ConfigFunc {
+	return func(c *Config) {
+		c.tls = tls
 	}
 }
 

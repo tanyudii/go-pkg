@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
@@ -17,8 +18,8 @@ const (
 	defaultMaxCallSendMsgSize = 1024 * 1024 * 50 //50MB
 )
 
-func ClientConn(addr string) grpc.ClientConnInterface {
-	opts := getDialOpts()
+func ClientConn(addr string, s ...bool) grpc.ClientConnInterface {
+	opts := getDialOpts(isSecure(s...))
 	conn, err := grpc.Dial(addr, opts...)
 	if err != nil {
 		panic(err)
@@ -26,9 +27,13 @@ func ClientConn(addr string) grpc.ClientConnInterface {
 	return conn
 }
 
-func getDialOpts() []grpc.DialOption {
+func getDialOpts(s bool) []grpc.DialOption {
+	creds := insecure.NewCredentials()
+	if s {
+		creds = credentials.NewTLS(&tls.Config{})
+	}
 	return []grpc.DialOption{
-		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})),
+		grpc.WithTransportCredentials(creds),
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(defaultMaxCallRcvMsgSize),
 			grpc.MaxCallSendMsgSize(defaultMaxCallSendMsgSize),
@@ -36,15 +41,22 @@ func getDialOpts() []grpc.DialOption {
 	}
 }
 
-func dial(network, addr string) (*grpc.ClientConn, error) {
+func dial(network, addr string, s ...bool) (*grpc.ClientConn, error) {
 	switch network {
 	case "tcp":
-		return dialTCP(context.Background(), addr)
+		return dialTCP(context.Background(), addr, s...)
 	default:
 		return nil, fmt.Errorf("%w: %v", ErrUnsupportedNetwork, network)
 	}
 }
 
-func dialTCP(ctx context.Context, addr string) (*grpc.ClientConn, error) {
-	return grpc.DialContext(ctx, addr, getDialOpts()...)
+func dialTCP(ctx context.Context, addr string, s ...bool) (*grpc.ClientConn, error) {
+	return grpc.DialContext(ctx, addr, getDialOpts(isSecure(s...))...)
+}
+
+func isSecure(s ...bool) bool {
+	if len(s) > 0 {
+		return s[0]
+	}
+	return false
 }

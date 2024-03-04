@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"net"
 	"net/http"
@@ -206,7 +207,7 @@ func (s *service) initReflection() {
 func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	mux := runtime.NewServeMux(s.cfg.restServeMuxOpts...)
 
-	conn, err := s.dialSelf()
+	conn, err := s.dialSelf(s.cfg.tls)
 	if err != nil {
 		return nil, err
 	}
@@ -215,13 +216,13 @@ func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 		return nil, err
 	}
 
-	endpoint := ":" + s.cfg.gRPCPort
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(
-			credentials.NewTLS(&tls.Config{}),
-		),
+	creds := insecure.NewCredentials()
+	if s.cfg.tls {
+		creds = credentials.NewTLS(&tls.Config{})
 	}
 
+	endpoint := ":" + s.cfg.gRPCPort
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
 	for i := range s.restHandlers {
 		h := s.restHandlers[i]
 		if err := h(ctx, mux, endpoint, opts); err != nil {
@@ -242,6 +243,6 @@ func (s *service) initHealthCheck(mux *runtime.ServeMux, conn *grpc.ClientConn) 
 	})
 }
 
-func (s *service) dialSelf() (*grpc.ClientConn, error) {
-	return dial("tcp", fmt.Sprintf("127.0.0.1:%s", s.cfg.gRPCPort))
+func (s *service) dialSelf(secure bool) (*grpc.ClientConn, error) {
+	return dial("tcp", fmt.Sprintf("127.0.0.1:%s", s.cfg.gRPCPort), secure)
 }
