@@ -41,10 +41,10 @@ func getDialOpts(s bool) []grpc.DialOption {
 	}
 }
 
-func dial(network, addr string, s ...bool) (*grpc.ClientConn, error) {
+func dial(network, addr string) (*grpc.ClientConn, error) {
 	switch network {
 	case "tcp":
-		return dialTCP(context.Background(), addr, s...)
+		return dialTCP(context.Background(), addr)
 	default:
 		return nil, fmt.Errorf("%w: %v", ErrUnsupportedNetwork, network)
 	}

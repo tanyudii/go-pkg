@@ -207,7 +207,7 @@ func (s *service) initReflection() {
 func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	mux := runtime.NewServeMux(s.cfg.restServeMuxOpts...)
 
-	conn, err := s.dialSelf(s.cfg.tls)
+	conn, err := s.dialSelf()
 	if err != nil {
 		return nil, err
 	}
@@ -243,6 +243,6 @@ func (s *service) initHealthCheck(mux *runtime.ServeMux, conn *grpc.ClientConn) 
 	})
 }
 
-func (s *service) dialSelf(secure bool) (*grpc.ClientConn, error) {
-	return dial("tcp", fmt.Sprintf("127.0.0.1:%s", s.cfg.gRPCPort), secure)
+func (s *service) dialSelf() (*grpc.ClientConn, error) {
+	return dial("tcp", fmt.Sprintf("127.0.0.1:%s", s.cfg.gRPCPort))
 }
