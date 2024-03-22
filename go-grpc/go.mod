@@ -11,7 +11,7 @@ require (
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.32.0
 	pkg.tanyudii.me/go-pkg/go-logger v0.0.1
-	pkg.tanyudii.me/go-pkg/go-tex v0.0.3
+	pkg.tanyudii.me/go-pkg/go-tex v0.0.5
 )
 
 require (

@@ -136,6 +136,6 @@ pkg.tanyudii.me/go-pkg/go-err v0.0.2 h1:C7pPOozD63ZZplWAAD2clLWDVAHkH8JHD0D9RzHi
 pkg.tanyudii.me/go-pkg/go-err v0.0.2/go.mod h1:tfYy2m3+tAjfQDuxJVBrda9/diqt8+uI8mvsWSbibds=
 pkg.tanyudii.me/go-pkg/go-logger v0.0.1 h1:vyVYVCTEWTlg3Smq7KNSP0omCs8UlTOKfo3gYkDSAAU=
 pkg.tanyudii.me/go-pkg/go-logger v0.0.1/go.mod h1:cQYz9Q3z0+RoUeaumqD2gDY3xQA0bU98nJsbEwU9/Lk=
-pkg.tanyudii.me/go-pkg/go-tex v0.0.3 h1:zv7nS7qmJ8aDkzm09c2xYh/fE44XipAimCXj8tM3P8A=
-pkg.tanyudii.me/go-pkg/go-tex v0.0.3/go.mod h1:3F5ZyX9eBClZl2qQxSqIEbO1kFvrrUvcGHGjaSESCqg=
+pkg.tanyudii.me/go-pkg/go-tex v0.0.5 h1:Py6bcG8z+qbF34jWM+BZf1+k+7TV2b/+1LL9cXc0Ub0=
+pkg.tanyudii.me/go-pkg/go-tex v0.0.5/go.mod h1:3F5ZyX9eBClZl2qQxSqIEbO1kFvrrUvcGHGjaSESCqg=
 rsc.io/pdf v0.1.1/go.mod h1:n8OzWcQ6Sp37PL01nO98y4iUCRdTGarVfzxY20ICaU4=
