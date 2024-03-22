@@ -31,5 +31,5 @@ gorm.io/gorm v1.25.2 h1:gs1o6Vsa+oVKG/a9ElL3XgyGfghFfkKA2SInQaCyMho=
 gorm.io/gorm v1.25.2/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
 pkg.tanyudii.me/go-pkg/go-logger v0.0.1 h1:vyVYVCTEWTlg3Smq7KNSP0omCs8UlTOKfo3gYkDSAAU=
 pkg.tanyudii.me/go-pkg/go-logger v0.0.1/go.mod h1:cQYz9Q3z0+RoUeaumqD2gDY3xQA0bU98nJsbEwU9/Lk=
-pkg.tanyudii.me/go-pkg/go-mon v0.0.7 h1:7UxIuB4TsAqx6Z7ph7De5B6SKYcNIur96Xyn2V5hkrA=
-pkg.tanyudii.me/go-pkg/go-mon v0.0.7/go.mod h1:fYW5JAuCXFzv12LgOwsRMcD5HBr/yMVi9Opk5NI67TA=
+pkg.tanyudii.me/go-pkg/go-mon v0.0.10 h1:iKIt/as5fN0m+UJYCVJDTUOmI7m9D8894Sx59baWvrk=
+pkg.tanyudii.me/go-pkg/go-mon v0.0.10/go.mod h1:lWjwtIQLtoR73139BeYBU/wSZDFojRhtZD8RWaSW25I=
