@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials"
@@ -25,6 +27,11 @@ import (
 
 var (
 	ErrServerNotInitialized = errors.New("server not initialized")
+	RpcDurationsHistogram   = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name:    "grpc_rpc_durations_histogram",
+		Help:    "GRPC RPC latency distributions.",
+		Buckets: []float64{5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000},
+	}, []string{"httpCode", "grpcCode", "grpcMethod", "statusCode"})
 )
 
 type RESTHandler func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error)
@@ -37,15 +44,17 @@ type Service interface {
 	RunServers(ctx context.Context) <-chan error
 	ListenAndServeGRPC(ctx context.Context) error
 	ListenAndServeREST(ctx context.Context) error
+	ListenAndServePrometheus(ctx context.Context) error
 	RegisterUnaryServerInterceptor(i ...grpc.UnaryServerInterceptor)
 	RegisterRESTHandler(handlers ...RESTHandler)
 }
 
 type service struct {
-	cfg          *Config
-	server       *grpc.Server
-	interceptors Interceptors
-	restHandlers []RESTHandler
+	cfg                  *Config
+	server               *grpc.Server
+	interceptors         Interceptors
+	restHandlers         []RESTHandler
+	prometheusCollectors []prometheus.Collector
 }
 
 type Interceptors struct {
@@ -63,6 +72,7 @@ func (s *service) Init() {
 	s.initConfigRestServeMuxOpts()
 	s.initGRPCServer()
 	s.initReflection()
+	s.initDefaultPrometheusCollectors()
 }
 
 func (s *service) Shutdown(ctx context.Context) error {
@@ -109,6 +119,11 @@ func (s *service) RunServers(ctx context.Context) <-chan error {
 	go wg.Wrap(func() {
 		gologger.Infof("go grpc initializing HTTP connection in port %s", s.cfg.restPort)
 		exitFunc(s.ListenAndServeREST(ctx))
+	})
+
+	go wg.Wrap(func() {
+		gologger.Infof("go grpc initializing Prometheus connection in port %s", s.cfg.prometheusPort)
+		exitFunc(s.ListenAndServePrometheus(ctx))
 	})
 
 	return exitCh
@@ -168,6 +183,38 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 	return nil
 }
 
+func (s *service) ListenAndServePrometheus(ctx context.Context) (err error) {
+	for _, c := range s.prometheusCollectors {
+		if err = prometheus.Register(c); err != nil {
+			gologger.Errorf("go grpc listen and serve prometheus: failed to register %v", err)
+			return err
+		}
+	}
+
+	mux := http.NewServeMux()
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%s", s.cfg.prometheusPort),
+		Handler: MuxCORS(mux),
+	}
+
+	mux.Handle("/metrics", promhttp.Handler())
+
+	go func() {
+		<-ctx.Done()
+		if err = srv.Shutdown(context.Background()); err != nil {
+			gologger.Errorf("go grpc listen and serve prometheus: failed to shutdown %v", err)
+		}
+	}()
+
+	gologger.Infof("go grpc listen and serve prometheus: %v", s.cfg.prometheusPort)
+	if err = srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		gologger.Errorf("go grpc listen and serve prometheus: failed to listen and serve %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (s *service) GetServer() *grpc.Server {
 	return s.server
 }
@@ -202,6 +249,10 @@ func (s *service) initGRPCServer() {
 
 func (s *service) initReflection() {
 	reflection.Register(s.GetServer())
+}
+
+func (s *service) initDefaultPrometheusCollectors() {
+	s.prometheusCollectors = append(s.prometheusCollectors, RpcDurationsHistogram)
 }
 
 func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {

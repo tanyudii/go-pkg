@@ -5,6 +5,8 @@ import "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 const (
 	DefaultGRPCPort           = "5758"
 	DefaultRESTPort           = "8080"
+	DefaultPrometheusPort     = "9800"
+	DefaultEnablePrometheus   = true
 	DefaultEnableCORS         = true
 	DefaultOnlyJSON           = true
 	DefaultRegisterReflection = true
@@ -13,6 +15,8 @@ const (
 type Config struct {
 	gRPCPort           string
 	restPort           string
+	prometheusPort     string
+	enablePrometheus   bool
 	enableCORS         bool
 	onlyJSON           bool
 	registerReflection bool
@@ -37,6 +41,18 @@ func RESTPort(p string) ConfigFunc {
 	}
 	return func(c *Config) {
 		c.restPort = p
+	}
+}
+
+func PrometheusPort(p string) ConfigFunc {
+	return func(c *Config) {
+		c.prometheusPort = p
+	}
+}
+
+func EnablePrometheus(p bool) ConfigFunc {
+	return func(c *Config) {
+		c.enablePrometheus = p
 	}
 }
 
@@ -74,6 +90,8 @@ func generate(args ...ConfigFunc) *Config {
 	c := &Config{
 		gRPCPort:           DefaultGRPCPort,
 		restPort:           DefaultRESTPort,
+		prometheusPort:     DefaultPrometheusPort,
+		enablePrometheus:   DefaultEnablePrometheus,
 		enableCORS:         DefaultEnableCORS,
 		onlyJSON:           DefaultOnlyJSON,
 		registerReflection: DefaultRegisterReflection,
