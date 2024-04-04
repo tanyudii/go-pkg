@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	ErrServerNotInitialized = errors.New("server not initialized")
+	ErrServerNotInitialized = errors.New("[ERROR]: Server not initialized")
 	RpcDurationsHistogram   = prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Name:    "grpc_rpc_durations_histogram",
 		Help:    "GRPC RPC latency distributions.",

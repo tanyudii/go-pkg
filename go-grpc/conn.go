@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrUnsupportedNetwork = fmt.Errorf("unsupported network")
+	ErrUnsupportedNetwork = fmt.Errorf("[ERROR]: Unsupported network")
 )
 
 const (

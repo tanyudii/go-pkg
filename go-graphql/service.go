@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	ErrServerNotInitialized = errors.New("server not initialized")
+	ErrServerNotInitialized = errors.New("[ERROR]: Server not initialized")
 )
 
 type Service interface {

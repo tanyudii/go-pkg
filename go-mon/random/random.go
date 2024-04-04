@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	ErrRandomTooMuch = errors.New("the length of randomness is too much")
+	ErrRandomTooMuch = errors.New("[ERROR]: The length of randomness is too much")
 )
 
 // StringRand generates a random string of fixed size

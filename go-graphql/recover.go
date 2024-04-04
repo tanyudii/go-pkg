@@ -10,7 +10,7 @@ import (
 
 func Recover(_ context.Context, err interface{}) error {
 	if _, ok := err.(error); !ok {
-		err = errors.New("unexpected error happened")
+		err = errors.New("[ERROR]: Unexpected error happened")
 	}
 	gologger.WithField("stacktrace", string(debug.Stack())).Errorf("panic recovered: %v", err)
 	return gqlerror.Errorf("internal system error")

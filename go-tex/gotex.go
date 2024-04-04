@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	ErrContextNotFound        = goerr.NewInternalServerErrorWithName("context not found", "GOTEX_NOT_FOUND")
-	ErrUnauthorized           = goerr.NewUnauthorizedErrorWithName("unauthorized", "GOTEX_UNAUTHORIZED")
+	ErrContextNotFound        = goerr.NewInternalServerErrorWithName("[ERROR]: Context not found", "GOTEX_NOT_FOUND")
+	ErrUnauthorized           = goerr.NewUnauthorizedErrorWithName("[ERROR]: Unauthorized", "GOTEX_UNAUTHORIZED")
 	ErrUnauthorizedUserType   = fmt.Errorf("%w: user type", ErrUnauthorized)
 	ErrUnauthorizedPermission = fmt.Errorf("%w: permission", ErrUnauthorized)
 	ErrUnauthorizedScope      = fmt.Errorf("%w: scope", ErrUnauthorized)
