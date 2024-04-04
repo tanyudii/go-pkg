@@ -2,9 +2,14 @@ package download
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	gologger "pkg.tanyudii.me/go-pkg/go-logger"
+)
+
+var (
+	ErrDownloadFailed = fmt.Errorf("[ERROR]: Download failed")
 )
 
 func Download(url, method string) ([]byte, error) {
@@ -27,5 +32,8 @@ func WithCtx(ctx context.Context, url, method string) ([]byte, error) {
 			gologger.Errorf("error closing response body: %v", err)
 		}
 	}()
-	return io.ReadAll(resp.Body)
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return io.ReadAll(resp.Body)
+	}
+	return nil, fmt.Errorf("%w: returning non 2xx http code %v", ErrDownloadFailed, resp.StatusCode)
 }
