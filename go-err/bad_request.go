@@ -94,6 +94,18 @@ func NewBadRequestErrorWithName(msg string, name string) error {
 	}
 }
 
+func NewBadRequestErrorWithCodeAndName(msg string, code int, name string) error {
+	return &BadRequestError{
+		baseError: &baseError{
+			code:     code,
+			name:     name,
+			message:  msg,
+			grpcCode: badRequestGRPCCode,
+			httpCode: badRequestHTTPCode,
+		},
+	}
+}
+
 func NewBadRequestErrorWithFields(msg string, fields ErrorField) error {
 	return &BadRequestError{
 		fields: fields,

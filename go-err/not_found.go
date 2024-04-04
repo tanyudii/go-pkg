@@ -47,6 +47,18 @@ func NewNotFoundErrorWithName(msg string, name string) error {
 	}
 }
 
+func NewNotFoundErrorWithCodeAndName(msg string, code int, name string) error {
+	return &NotFoundError{
+		baseError: &baseError{
+			code:     code,
+			name:     name,
+			message:  msg,
+			grpcCode: notFoundGRPCCode,
+			httpCode: notFoundHTTPCode,
+		},
+	}
+}
+
 func IsNotFoundErrorGRPC(err error) bool {
 	return GetErrorGRPCCodeFromErrorGRPC(err) == notFoundGRPCCode
 }

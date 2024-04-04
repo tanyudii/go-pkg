@@ -47,6 +47,18 @@ func NewUnauthorizedErrorWithName(msg string, name string) error {
 	}
 }
 
+func NewUnauthorizedErrorWithCodeAndName(msg string, code int, name string) error {
+	return &UnauthorizedError{
+		baseError: &baseError{
+			code:     code,
+			name:     name,
+			message:  msg,
+			grpcCode: unauthorizedGRPCCode,
+			httpCode: unauthorizedHTTPCode,
+		},
+	}
+}
+
 func IsUnauthorizedErrorGRPC(err error) bool {
 	return GetErrorGRPCCodeFromErrorGRPC(err) == unauthorizedGRPCCode
 }

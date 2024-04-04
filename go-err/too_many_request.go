@@ -47,6 +47,18 @@ func NewTooManyRequestErrorWithName(msg string, name string) error {
 	}
 }
 
+func NewTooManyRequestErrorWithCodeAndName(msg string, code int, name string) error {
+	return &TooManyRequestError{
+		baseError: &baseError{
+			code:     code,
+			name:     name,
+			message:  msg,
+			grpcCode: tooManyRequestGRPCCode,
+			httpCode: tooManyRequestHTTPCode,
+		},
+	}
+}
+
 func IsTooManyRequestErrorGRPC(err error) bool {
 	return GetErrorGRPCCodeFromErrorGRPC(err) == tooManyRequestGRPCCode
 }

@@ -47,6 +47,18 @@ func NewUnauthenticatedErrorWithName(msg string, name string) error {
 	}
 }
 
+func NewUnauthenticatedErrorWithCodeAndName(msg string, code int, name string) error {
+	return &UnauthenticatedError{
+		baseError: &baseError{
+			code:     code,
+			name:     name,
+			message:  msg,
+			grpcCode: unauthenticatedGRPCCode,
+			httpCode: unauthenticatedHTTPCode,
+		},
+	}
+}
+
 func IsUnauthenticatedErrorGRPC(err error) bool {
 	return GetErrorGRPCCodeFromErrorGRPC(err) == unauthenticatedGRPCCode
 }

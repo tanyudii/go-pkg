@@ -47,6 +47,18 @@ func NewInternalServerErrorWithName(msg string, name string) error {
 	}
 }
 
+func NewInternalServerErrorWithCodeAndName(msg string, code int, name string) error {
+	return &InternalServerError{
+		baseError: &baseError{
+			code:     code,
+			name:     name,
+			message:  msg,
+			grpcCode: internalServerGRPCCode,
+			httpCode: internalServerHTTPCode,
+		},
+	}
+}
+
 func IsInternalServerErrorGRPC(err error) bool {
 	return GetErrorGRPCCodeFromErrorGRPC(err) == internalServerGRPCCode
 }
