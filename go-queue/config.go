@@ -1,6 +1,8 @@
 package go_queue
 
-import "github.com/vmihailenco/taskq/v3"
+import (
+	"github.com/vmihailenco/taskq/v3"
+)
 
 type Config struct {
 	name          string
