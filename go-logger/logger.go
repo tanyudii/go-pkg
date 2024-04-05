@@ -22,15 +22,19 @@ func GetLogger() *logrus.Logger {
 func WithField(key string, value interface{}) *logrus.Entry {
 	return logger.WithField(key, value)
 }
+
 func WithFields(fields logrus.Fields) *logrus.Entry {
 	return logger.WithFields(fields)
 }
+
 func WithError(err error) *logrus.Entry {
 	return logger.WithError(err)
 }
+
 func WithContext(ctx context.Context) *logrus.Entry {
 	return logger.WithContext(ctx)
 }
+
 func WithTime(t time.Time) *logrus.Entry {
 	return logger.WithTime(t)
 }
