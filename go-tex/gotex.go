@@ -32,6 +32,7 @@ const (
 	RequestHeaderKeyRequestID            = "RequestID"
 	RequestHeaderKeyAcceptLanguage       = "Accept-Language"
 	RequestHeaderKeyXForwardedFor        = "X-Forwarded-For"
+	RequestHeaderUserAgent               = "User-Agent"
 
 	ScopeSeparator      = " "
 	PermissionSeparator = ";"
@@ -53,6 +54,7 @@ type Gotex struct {
 	RequestID            string
 	AcceptLanguage       string
 	XForwardedFor        string
+	UserAgent            string
 }
 
 func NewGotex(md ContextMD) *Gotex {
@@ -72,6 +74,7 @@ func NewGotex(md ContextMD) *Gotex {
 		RequestID:            md.Get(strings.ToLower(RequestHeaderKeyRequestID)),
 		AcceptLanguage:       md.Get(strings.ToLower(RequestHeaderKeyAcceptLanguage)),
 		XForwardedFor:        md.Get(strings.ToLower(RequestHeaderKeyXForwardedFor)),
+		UserAgent:            md.Get(strings.ToLower(RequestHeaderUserAgent)),
 	}
 }
 
@@ -92,6 +95,7 @@ func (c *Gotex) ToContextMD(ctx context.Context) context.Context {
 	md.Set(strings.ToLower(RequestHeaderKeyRequestID), c.RequestID)
 	md.Set(strings.ToLower(RequestHeaderKeyAcceptLanguage), c.AcceptLanguage)
 	md.Set(strings.ToLower(RequestHeaderKeyXForwardedFor), c.XForwardedFor)
+	md.Set(strings.ToLower(RequestHeaderUserAgent), c.UserAgent)
 	ctx = NewContext(ctx, c)
 	return md.ToIncoming(ctx)
 }
@@ -189,6 +193,7 @@ func ParseToGrpcCtx(ctx context.Context, pwd ...string) context.Context {
 		newCtx.Add(strings.ToLower(RequestHeaderKeyRequestID), r.RequestID)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyAcceptLanguage), r.AcceptLanguage)
 		newCtx.Add(strings.ToLower(RequestHeaderKeyXForwardedFor), r.XForwardedFor)
+		newCtx.Add(strings.ToLower(RequestHeaderUserAgent), r.UserAgent)
 		return newCtx.ToOutgoing(ctx)
 	}
 	return ctx
