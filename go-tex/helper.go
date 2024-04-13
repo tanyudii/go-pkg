@@ -64,8 +64,8 @@ func CreateInternalEContextDummy(pwd ...string) *Gotex {
 	}
 }
 
-func CreateGRPCContextDummy(ctx context.Context) context.Context {
-	eCtxDummy := CreateInternalEContextDummy()
+func CreateGRPCContextDummy(ctx context.Context, pwd ...string) context.Context {
+	eCtxDummy := CreateInternalEContextDummy(pwd...)
 	return ParseToGrpcCtx(NewContext(ctx, eCtxDummy))
 }
 
