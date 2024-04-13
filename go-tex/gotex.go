@@ -154,6 +154,27 @@ func (c *Gotex) HasUserTypeByMapCode(codes map[string]bool) (bool, error) {
 	return false, ErrUnauthorizedUserType
 }
 
+func (c *Gotex) ToRequestHeaders() map[string]string {
+	return map[string]string{
+		RequestHeaderKeyUserID:               c.UserID,
+		RequestHeaderKeyUserName:             c.UserName,
+		RequestHeaderKeyUserEmail:            c.UserEmail,
+		RequestHeaderKeyUserType:             c.UserType,
+		RequestHeaderKeyCompanyID:            c.CompanyID,
+		RequestHeaderKeyCompanyName:          c.CompanyName,
+		RequestHeaderKeyPermissions:          c.Permissions,
+		RequestHeaderKeyClientID:             c.ClientID,
+		RequestHeaderKeyClientName:           c.ClientName,
+		RequestHeaderKeyScopes:               c.Scopes,
+		RequestHeaderKeyInternalCallPassword: c.InternalCallPassword,
+		RequestHeaderKeyAuthorization:        c.Authorization,
+		RequestHeaderKeyRequestID:            c.RequestID,
+		RequestHeaderKeyAcceptLanguage:       c.AcceptLanguage,
+		RequestHeaderKeyXForwardedFor:        c.XForwardedFor,
+		RequestHeaderUserAgent:               c.UserAgent,
+	}
+}
+
 func NewContext(ctx context.Context, eCtx *Gotex) context.Context {
 	if eCtx == nil {
 		return ctx
