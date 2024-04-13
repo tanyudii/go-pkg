@@ -240,6 +240,7 @@ func (s *service) initConfigRestServeMuxOpts() {
 		s.cfg.restServeMuxOpts,
 		runtime.WithRoutingErrorHandler(MuxHandleRoutingError),
 		runtime.WithErrorHandler(MuxErrorHandler),
+		runtime.WithIncomingHeaderMatcher(MuxIncomingHeaderMatcher),
 	)
 }
 
@@ -276,7 +277,7 @@ func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
 	for i := range s.restHandlers {
 		h := s.restHandlers[i]
-		if err := h(ctx, mux, endpoint, opts); err != nil {
+		if err = h(ctx, mux, endpoint, opts); err != nil {
 			return nil, err
 		}
 	}

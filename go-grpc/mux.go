@@ -12,9 +12,33 @@ import (
 )
 
 const (
-	HeaderContentType   = "Content-Type"
-	HeaderAccept        = "Accept"
-	HeaderAuthorization = "authorization"
+	HeaderContentType          = "Content-Type"
+	HeaderAccept               = "Accept"
+	HeaderAcceptLanguage       = "accept-language"
+	HeaderAuthorization        = "authorization"
+	HeaderInternalCallPassword = "internalcallpassword"
+	HeaderKeyUserID            = "userid"
+	HeaderKeyUserType          = "usertype"
+	HeaderKeyCompanyID         = "companyid"
+	HeaderKeyClientID          = "clientid"
+	HeaderKeyRequestID         = "requestid"
+	HeaderUserAgent            = "user-agent"
+	HeaderGRPCUserAgent        = "grpcgateway-user-agent"
+)
+
+var (
+	mapHeaderTransform = map[string]string{
+		HeaderContentType:          HeaderContentType,
+		HeaderAccept:               HeaderAccept,
+		HeaderAcceptLanguage:       HeaderAcceptLanguage,
+		HeaderInternalCallPassword: HeaderInternalCallPassword,
+		HeaderKeyUserID:            HeaderKeyUserID,
+		HeaderKeyUserType:          HeaderKeyUserType,
+		HeaderKeyCompanyID:         HeaderKeyCompanyID,
+		HeaderKeyClientID:          HeaderKeyClientID,
+		HeaderKeyRequestID:         HeaderKeyRequestID,
+		HeaderUserAgent:            HeaderGRPCUserAgent,
+	}
 )
 
 func MuxCORS(h http.Handler) http.Handler {
@@ -55,6 +79,13 @@ func MuxErrorHandler(ctx context.Context, mux *runtime.ServeMux, m runtime.Marsh
 	httpStatus := runtime.HTTPStatusFromCode(s.Code())
 	newError := runtime.HTTPStatusError{HTTPStatus: httpStatus, Err: err}
 	runtime.DefaultHTTPErrorHandler(ctx, mux, m, w, req, &newError)
+}
+
+func MuxIncomingHeaderMatcher(key string) (string, bool) {
+	if h, ok := mapHeaderTransform[strings.ToLower(key)]; ok {
+		return h, true
+	}
+	return "", false
 }
 
 func MuxHandleRoutingRedirect(_ context.Context, w http.ResponseWriter, _ proto.Message) error {
