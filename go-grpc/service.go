@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus"
@@ -15,6 +14,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 	"net"
 	"net/http"
 	"os"
@@ -150,22 +150,7 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 		return err
 	}
 
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.New()
-
-	srv := &http.Server{
-		Addr:    ":" + s.cfg.restPort,
-		Handler: r,
-	}
-
-	if s.cfg.enableCORS {
-		r.Use(GinCORS())
-	}
-	if s.cfg.onlyJSON {
-		r.Use(GinJSON())
-	}
-
-	r.Group("*{any}").Any("", gin.WrapH(handler))
+	srv := &http.Server{Addr: ":" + s.cfg.restPort, Handler: handler}
 
 	go func() {
 		<-ctx.Done()
@@ -241,6 +226,12 @@ func (s *service) initConfigRestServeMuxOpts() {
 		runtime.WithRoutingErrorHandler(MuxHandleRoutingError),
 		runtime.WithErrorHandler(MuxErrorHandler),
 		runtime.WithIncomingHeaderMatcher(MuxIncomingHeaderMatcher),
+		runtime.WithForwardResponseOption(MuxHandleRoutingRedirect),
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+			MarshalOptions: protojson.MarshalOptions{
+				EmitUnpopulated: true,
+			},
+		}),
 	)
 }
 
