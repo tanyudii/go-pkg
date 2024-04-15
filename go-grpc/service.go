@@ -150,7 +150,10 @@ func (s *service) ListenAndServeREST(ctx context.Context) error {
 		return err
 	}
 
-	srv := &http.Server{Addr: ":" + s.cfg.restPort, Handler: handler}
+	srv := &http.Server{
+		Addr:    ":" + s.cfg.restPort,
+		Handler: MuxCORS(handler),
+	}
 
 	go func() {
 		<-ctx.Done()
