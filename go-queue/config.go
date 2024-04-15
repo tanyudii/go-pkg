@@ -10,7 +10,7 @@ type Config struct {
 	maxNumWorker  int32
 	workerLimit   int32
 	maxNumFetcher int32
-	redis         taskq.Redis
+	//redis         taskq.Redis
 }
 
 type ConfigFunc func(c *Config)
@@ -45,11 +45,11 @@ func MaxNumFetcher(f int32) ConfigFunc {
 	}
 }
 
-func Redis(r taskq.Redis) ConfigFunc {
-	return func(c *Config) {
-		c.redis = r
-	}
-}
+//func Redis(r taskq.Redis) ConfigFunc {
+//	return func(c *Config) {
+//		c.redis = r
+//	}
+//}
 
 func (c *Config) ToQueueOptions() *taskq.QueueOptions {
 	return &taskq.QueueOptions{
@@ -58,7 +58,7 @@ func (c *Config) ToQueueOptions() *taskq.QueueOptions {
 		MaxNumWorker:  c.maxNumWorker,
 		WorkerLimit:   c.workerLimit,
 		MaxNumFetcher: c.maxNumFetcher,
-		Redis:         c.redis,
+		//Redis:         c.redis,
 	}
 }
 
