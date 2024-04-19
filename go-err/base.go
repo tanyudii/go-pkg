@@ -13,6 +13,7 @@ type baseError struct {
 	message  string
 	grpcCode codes.Code
 	httpCode int
+	fields   ErrorField
 }
 
 func (i *baseError) Error() string {
@@ -40,7 +41,14 @@ func (i *baseError) GRPCStatus() *status.Status {
 	if customErr := i.GetErrorInfoCustom(); customErr != nil {
 		stats, _ = stats.WithDetails(customErr)
 	}
+	if fields := i.GetBadRequestFields(); fields != nil {
+		stats, _ = stats.WithDetails(fields)
+	}
 	return stats
+}
+
+func (i *baseError) GetFields() ErrorField {
+	return i.fields
 }
 
 func (i *baseError) ToResponseError() *ResponseError {
@@ -59,4 +67,19 @@ func (i *baseError) GetErrorInfoCustom() *errdetails.ErrorInfo {
 		return nil
 	}
 	return &errdetails.ErrorInfo{Metadata: metaData}
+}
+
+func (i *baseError) GetBadRequestFields() *errdetails.BadRequest {
+	errFields := i.GetFields()
+	if len(errFields) == 0 {
+		return nil
+	}
+	br := &errdetails.BadRequest{}
+	for attr, msg := range i.GetFields() {
+		br.FieldViolations = append(br.FieldViolations, &errdetails.BadRequest_FieldViolation{
+			Field:       attr,
+			Description: msg,
+		})
+	}
+	return br
 }

@@ -4,7 +4,6 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"net/http"
 	"strconv"
 )
 
@@ -13,41 +12,23 @@ const (
 	metaKeyErrorName = "name"
 )
 
-func FromStatus(s *status.Status) CustomError {
-	if s == nil {
+func FromResponseError(respErr *ResponseError) error {
+	if respErr == nil ||
+		respErr.Status != ResponseErrorStatus ||
+		respErr.Meta == nil {
 		return nil
 	}
 
 	base := &baseError{
-		grpcCode: s.Code(),
-		httpCode: HTTPStatusFromCode(s.Code()),
-		message:  s.Message(),
+		code:     respErr.Meta.Code,
+		name:     respErr.Meta.Name,
+		message:  respErr.Message,
+		grpcCode: respErr.Meta.GrpcCode,
+		httpCode: respErr.Meta.HttpCode,
+		fields:   respErr.Meta.Fields,
 	}
 
-	for _, detail := range s.Details() {
-		errInfo, valid := detail.(*errdetails.ErrorInfo)
-		if valid {
-			if codeStr, ok := errInfo.Metadata[metaKeyErrorCode]; ok {
-				if code, err := strconv.Atoi(codeStr); err == nil {
-					base.code = code
-				}
-			}
-			if name, ok := errInfo.Metadata[metaKeyErrorName]; ok {
-				base.name = name
-			}
-			continue
-		}
-		badRequest, valid := detail.(*errdetails.BadRequest)
-		if valid {
-			fields := make(ErrorField)
-			for _, field := range badRequest.FieldViolations {
-				fields[field.Field] = field.Description
-			}
-			return &BadRequestError{baseError: base, fields: fields}
-		}
-	}
-
-	switch s.Code() {
+	switch respErr.Meta.GrpcCode {
 	case badRequestGRPCCode:
 		return &BadRequestError{baseError: base}
 	case notFoundGRPCCode:
@@ -123,46 +104,4 @@ func IsErrorName(err error, name string) bool {
 		}
 	}
 	return false
-}
-
-func HTTPStatusFromCode(code codes.Code) int {
-	switch code {
-	case codes.OK:
-		return http.StatusOK
-	case codes.Canceled:
-		return 499
-	case codes.Unknown:
-		return http.StatusInternalServerError
-	case codes.InvalidArgument:
-		return http.StatusBadRequest
-	case codes.DeadlineExceeded:
-		return http.StatusGatewayTimeout
-	case codes.NotFound:
-		return http.StatusNotFound
-	case codes.AlreadyExists:
-		return http.StatusConflict
-	case codes.PermissionDenied:
-		return http.StatusForbidden
-	case codes.Unauthenticated:
-		return http.StatusUnauthorized
-	case codes.ResourceExhausted:
-		return http.StatusTooManyRequests
-	case codes.FailedPrecondition:
-		// Note, this deliberately doesn't translate to the similarly named '412 Precondition Failed' HTTP response status.
-		return http.StatusBadRequest
-	case codes.Aborted:
-		return http.StatusConflict
-	case codes.OutOfRange:
-		return http.StatusBadRequest
-	case codes.Unimplemented:
-		return http.StatusNotImplemented
-	case codes.Internal:
-		return http.StatusInternalServerError
-	case codes.Unavailable:
-		return http.StatusServiceUnavailable
-	case codes.DataLoss:
-		return http.StatusInternalServerError
-	default:
-		return http.StatusInternalServerError
-	}
 }

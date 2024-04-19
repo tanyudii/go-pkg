@@ -8,5 +8,6 @@ type CustomError interface {
 	GetName() string
 	GetGRPCCode() codes.Code
 	GetHTTPCode() int
+	GetFields() ErrorField
 	ToResponseError() *ResponseError
 }

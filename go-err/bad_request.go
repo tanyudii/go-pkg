@@ -3,9 +3,7 @@ package go_err
 import (
 	"errors"
 	"fmt"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"net/http"
 )
 
@@ -16,41 +14,6 @@ const (
 
 type BadRequestError struct {
 	*baseError
-	fields ErrorField
-}
-
-func (i *BadRequestError) GRPCStatus() *status.Status {
-	stats := status.New(i.GetGRPCCode(), i.Error())
-	if customErr := i.GetErrorInfoCustom(); customErr != nil {
-		stats, _ = stats.WithDetails(customErr)
-	}
-	if fields := i.GetBadRequestFields(); fields != nil {
-		stats, _ = stats.WithDetails(fields)
-	}
-	return stats
-}
-
-func (i *BadRequestError) GetFields() ErrorField {
-	return i.fields
-}
-
-func (i *BadRequestError) GetBadRequestFields() *errdetails.BadRequest {
-	errFields := i.GetFields()
-	if len(errFields) == 0 {
-		return nil
-	}
-	br := &errdetails.BadRequest{}
-	for attr, msg := range i.GetFields() {
-		br.FieldViolations = append(br.FieldViolations, &errdetails.BadRequest_FieldViolation{
-			Field:       attr,
-			Description: msg,
-		})
-	}
-	return br
-}
-
-func (i *BadRequestError) ToResponseError() *ResponseError {
-	return NewResponseErrorWithFields(i, i.fields)
 }
 
 func NewBadRequestError(msg string) error {
@@ -99,11 +62,11 @@ func NewBadRequestErrorWithCodeAndName(msg string, code int, name string) error 
 
 func NewBadRequestErrorWithFields(msg string, fields ErrorField) error {
 	return &BadRequestError{
-		fields: fields,
 		baseError: &baseError{
 			message:  msg,
 			grpcCode: badRequestGRPCCode,
 			httpCode: badRequestHTTPCode,
+			fields:   fields,
 		},
 	}
 }

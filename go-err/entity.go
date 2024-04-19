@@ -1,5 +1,11 @@
 package go_err
 
+import "google.golang.org/grpc/codes"
+
+const (
+	ResponseErrorStatus = "error"
+)
+
 type ResponseError struct {
 	Status  string     `json:"status,omitempty"`
 	Message string     `json:"message,omitempty"`
@@ -7,21 +13,25 @@ type ResponseError struct {
 }
 
 type ErrorMeta struct {
-	Code   int        `json:"code,omitempty"`
-	Name   string     `json:"name,omitempty"`
-	Fields ErrorField `json:"fields,omitempty"`
+	Code     int        `json:"code,omitempty"`
+	Name     string     `json:"name,omitempty"`
+	GrpcCode codes.Code `json:"grpcCode,omitempty"`
+	HttpCode int        `json:"httpCode,omitempty"`
+	Fields   ErrorField `json:"fields,omitempty"`
 }
 
 func NewResponseError(c CustomError) *ResponseError {
-	resp := &ResponseError{
-		Status:  "error",
+	return &ResponseError{
+		Status:  ResponseErrorStatus,
 		Message: c.Error(),
+		Meta: &ErrorMeta{
+			Code:     c.GetCode(),
+			Name:     c.GetName(),
+			GrpcCode: c.GetGRPCCode(),
+			HttpCode: c.GetHTTPCode(),
+			Fields:   c.GetFields(),
+		},
 	}
-	code, name := c.GetCode(), c.GetName()
-	if code != 0 || name != "" {
-		resp.Meta = &ErrorMeta{Code: code, Name: name}
-	}
-	return resp
 }
 
 func NewResponseErrorWithFields(c CustomError, fields map[string]string) *ResponseError {
@@ -45,6 +55,14 @@ func (r *ResponseError) AddField(key, value string) {
 		r.Meta.Fields = make(ErrorField)
 	}
 	r.Meta.Fields[key] = value
+}
+
+func (r *ResponseError) ToBadRequest() *BadRequestError {
+	return &BadRequestError{
+		baseError: &baseError{
+			code: r.Meta.Code,
+		},
+	}
 }
 
 type ErrorField map[string]string
