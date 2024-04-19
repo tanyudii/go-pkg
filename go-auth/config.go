@@ -58,5 +58,13 @@ func generate(args ...ConfigFunc) *Config {
 	for i := range args {
 		args[i](c)
 	}
+	if c.mapPublicRoutes == nil {
+		c.mapPublicRoutes = make(MapPublicRoutes)
+	}
+
+	// register route grpc health check
+	c.mapPublicRoutes["/grpc.health.v1.Health/Check"] = true
+	c.mapPublicRoutes["/grpc.health.v1.Health/Watch"] = true
+
 	return c
 }
