@@ -4,9 +4,12 @@ import (
 	"context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
+	"io"
 	"net/http"
+	goerr "pkg.tanyudii.me/go-pkg/go-err"
 	gologger "pkg.tanyudii.me/go-pkg/go-logger"
 	"strings"
 )
@@ -74,11 +77,46 @@ func MuxHandleRoutingError(ctx context.Context, mux *runtime.ServeMux, marshaler
 	runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
 }
 
-func MuxErrorHandler(ctx context.Context, mux *runtime.ServeMux, m runtime.Marshaler, w http.ResponseWriter, req *http.Request, err error) {
+func MuxErrorHandler(_ context.Context, _ *runtime.ServeMux, m runtime.Marshaler, w http.ResponseWriter, _ *http.Request, err error) {
 	s := status.Convert(err)
-	httpStatus := runtime.HTTPStatusFromCode(s.Code())
-	newError := runtime.HTTPStatusError{HTTPStatus: httpStatus, Err: err}
-	runtime.DefaultHTTPErrorHandler(ctx, mux, m, w, req, &newError)
+
+	customStatus := goerr.FromStatus(s)
+
+	var resp *goerr.ResponseError
+	if customStatus != nil {
+		resp = customStatus.ToResponseError()
+	} else {
+		resp = &goerr.ResponseError{
+			Status:  "error",
+			Message: http.StatusText(http.StatusInternalServerError),
+		}
+	}
+
+	w.Header().Del("Trailer")
+	w.Header().Del("Transfer-Encoding")
+
+	contentType := m.ContentType(resp)
+	w.Header().Set("Content-Type", contentType)
+
+	if s.Code() == codes.Unauthenticated {
+		w.Header().Set("WWW-Authenticate", s.Message())
+	}
+
+	buf, merr := m.Marshal(resp)
+	if merr != nil {
+		grpclog.Infof("Failed to marshal error message %q: %v", s, merr)
+		w.WriteHeader(http.StatusInternalServerError)
+		if _, err = io.WriteString(w, `{"status": "Internal Server Error", "message": "failed to marshal error message"}`); err != nil {
+			grpclog.Infof("Failed to write response: %v", err)
+		}
+		return
+	}
+
+	st := runtime.HTTPStatusFromCode(s.Code())
+	w.WriteHeader(st)
+	if _, err = w.Write(buf); err != nil {
+		grpclog.Infof("Failed to write response: %v", err)
+	}
 }
 
 func MuxIncomingHeaderMatcher(key string) (string, bool) {

@@ -10,9 +10,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
 	"net"
@@ -73,6 +73,7 @@ func (s *service) Init() {
 	s.initGRPCServer()
 	s.initReflection()
 	s.initDefaultPrometheusCollectors()
+	s.registerHealthServer()
 }
 
 func (s *service) Shutdown(ctx context.Context) error {
@@ -230,9 +231,11 @@ func (s *service) initConfigRestServeMuxOpts() {
 		runtime.WithErrorHandler(MuxErrorHandler),
 		runtime.WithIncomingHeaderMatcher(MuxIncomingHeaderMatcher),
 		runtime.WithForwardResponseOption(MuxHandleRoutingRedirect),
+		runtime.WithHealthEndpointAt(grpc_health_v1.NewHealthClient(ClientConn(":"+s.cfg.gRPCPort)), "/_health"),
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+			UnmarshalOptions: protojson.UnmarshalOptions{},
 			MarshalOptions: protojson.MarshalOptions{
-				EmitUnpopulated: true,
+				UseProtoNames: true,
 			},
 		}),
 	)
@@ -253,15 +256,6 @@ func (s *service) initDefaultPrometheusCollectors() {
 func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	mux := runtime.NewServeMux(s.cfg.restServeMuxOpts...)
 
-	conn, err := s.dialSelf()
-	if err != nil {
-		return nil, err
-	}
-
-	if err = s.initHealthCheck(mux, conn); err != nil {
-		return nil, err
-	}
-
 	creds := insecure.NewCredentials()
 	if s.cfg.tls {
 		creds = credentials.NewTLS(&tls.Config{})
@@ -271,7 +265,7 @@ func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
 	for i := range s.restHandlers {
 		h := s.restHandlers[i]
-		if err = h(ctx, mux, endpoint, opts); err != nil {
+		if err := h(ctx, mux, endpoint, opts); err != nil {
 			return nil, err
 		}
 	}
@@ -279,16 +273,6 @@ func (s *service) initRESTHandler(ctx context.Context) (http.Handler, error) {
 	return mux, nil
 }
 
-func (s *service) initHealthCheck(mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return mux.HandlePath(http.MethodGet, "/_health", func(w http.ResponseWriter, _ *http.Request, _ map[string]string) {
-		w.Header().Set("Content-Type", "text/plain")
-		if state := conn.GetState(); state != connectivity.Ready {
-			http.Error(w, fmt.Sprintf("gRPC server is %s", state), http.StatusBadGateway)
-			return
-		}
-	})
-}
-
-func (s *service) dialSelf() (*grpc.ClientConn, error) {
-	return dial("tcp", fmt.Sprintf("127.0.0.1:%s", s.cfg.gRPCPort))
+func (s *service) registerHealthServer() {
+	grpc_health_v1.RegisterHealthServer(s.GetServer(), newHealthServer())
 }
