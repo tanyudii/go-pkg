@@ -15,3 +15,14 @@ func ToMapBool(slice []string) map[string]bool {
 	}
 	return result
 }
+
+func ToSlice[T any, X any](d []T, fn func(d T) X) []X {
+	if d == nil {
+		return nil
+	}
+	dd := make([]X, len(d))
+	for i, v := range d {
+		dd[i] = fn(v)
+	}
+	return dd
+}
