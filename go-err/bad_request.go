@@ -19,26 +19,13 @@ type BadRequestError struct {
 	fields ErrorField
 }
 
-type ErrorField map[string]string
-
-func (f ErrorField) GetFirstErrorAndOtherTotal() (string, int) {
-	total := len(f)
-	if total > 0 {
-		total--
-	}
-	for k := range f {
-		return f[k], total
-	}
-	return "", 0
-}
-
 func (i *BadRequestError) GRPCStatus() *status.Status {
 	stats := status.New(i.GetGRPCCode(), i.Error())
-	if fields := i.GetBadRequestFields(); fields != nil {
-		stats, _ = stats.WithDetails(fields)
-	}
 	if customErr := i.GetErrorInfoCustom(); customErr != nil {
 		stats, _ = stats.WithDetails(customErr)
+	}
+	if fields := i.GetBadRequestFields(); fields != nil {
+		stats, _ = stats.WithDetails(fields)
 	}
 	return stats
 }
@@ -60,6 +47,10 @@ func (i *BadRequestError) GetBadRequestFields() *errdetails.BadRequest {
 		})
 	}
 	return br
+}
+
+func (i *BadRequestError) ToResponseError() *ResponseError {
+	return NewResponseErrorWithFields(i, i.fields)
 }
 
 func NewBadRequestError(msg string) error {

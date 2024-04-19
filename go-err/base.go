@@ -7,14 +7,6 @@ import (
 	"strconv"
 )
 
-type CustomError interface {
-	Error() string
-	GetCode() int
-	GetName() string
-	GetGRPCCode() codes.Code
-	GetHTTPCode() int
-}
-
 type baseError struct {
 	code     int
 	name     string
@@ -51,6 +43,10 @@ func (i *baseError) GRPCStatus() *status.Status {
 	return stats
 }
 
+func (i *baseError) ToResponseError() *ResponseError {
+	return NewResponseError(i)
+}
+
 func (i *baseError) GetErrorInfoCustom() *errdetails.ErrorInfo {
 	metaData := make(map[string]string)
 	if code := i.GetCode(); code != 0 {
@@ -62,7 +58,5 @@ func (i *baseError) GetErrorInfoCustom() *errdetails.ErrorInfo {
 	if len(metaData) == 0 {
 		return nil
 	}
-	return &errdetails.ErrorInfo{
-		Metadata: metaData,
-	}
+	return &errdetails.ErrorInfo{Metadata: metaData}
 }
