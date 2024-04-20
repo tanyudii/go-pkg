@@ -80,7 +80,6 @@ func FromResponseError(r *ResponseError) error {
 		Message:  r.Message,
 		GRPCCode: r.Meta.GrpcCode,
 		HTTPCode: r.Meta.HttpCode,
-		Data:     r.Data,
 		Fields:   r.Fields,
 	}
 

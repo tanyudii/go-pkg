@@ -16,8 +16,6 @@ type CustomError interface {
 	GetHTTPCode() int
 	GetFields() ErrorField
 	SetFields(v ErrorField)
-	GetData() any
-	SetData(v any)
 }
 
 type BaseError struct {
@@ -26,7 +24,6 @@ type BaseError struct {
 	Message  string
 	GRPCCode codes.Code
 	HTTPCode int
-	Data     any
 	Fields   ErrorField
 }
 
@@ -67,14 +64,6 @@ func (i *BaseError) GetFields() ErrorField {
 
 func (i *BaseError) SetFields(v ErrorField) {
 	i.Fields = v
-}
-
-func (i *BaseError) GetData() any {
-	return i.Data
-}
-
-func (i *BaseError) SetData(v any) {
-	i.Data = v
 }
 
 func (i *BaseError) getErrorInfoCustom() *errdetails.ErrorInfo {

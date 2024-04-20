@@ -25,7 +25,6 @@ type ResponseError struct {
 	Status  string     `json:"status,omitempty"`
 	Message string     `json:"message,omitempty"`
 	Meta    *ErrorMeta `json:"meta,omitempty"`
-	Data    any        `json:"data,omitempty"`
 	Fields  ErrorField `json:"fields,omitempty"`
 }
 
@@ -46,7 +45,6 @@ func NewResponseError(c CustomError) *ResponseError {
 			GrpcCode: c.GetGRPCCode(),
 			HttpCode: c.GetHTTPCode(),
 		},
-		Data:   c.GetData(),
 		Fields: c.GetFields(),
 	}
 }
