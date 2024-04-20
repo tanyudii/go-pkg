@@ -12,49 +12,49 @@ const (
 )
 
 type InternalServerError struct {
-	*baseError
+	*BaseError
 }
 
 func NewInternalServerError(msg string) error {
 	return &InternalServerError{
-		baseError: &baseError{
-			message:  msg,
-			grpcCode: internalServerGRPCCode,
-			httpCode: internalServerHTTPCode,
+		&BaseError{
+			Message:  msg,
+			GRPCCode: internalServerGRPCCode,
+			HTTPCode: internalServerHTTPCode,
 		},
 	}
 }
 
 func NewInternalServerErrorWithCode(msg string, code int) error {
 	return &InternalServerError{
-		baseError: &baseError{
-			code:     code,
-			message:  msg,
-			grpcCode: internalServerGRPCCode,
-			httpCode: internalServerHTTPCode,
+		&BaseError{
+			Code:     code,
+			Message:  msg,
+			GRPCCode: internalServerGRPCCode,
+			HTTPCode: internalServerHTTPCode,
 		},
 	}
 }
 
 func NewInternalServerErrorWithName(msg string, name string) error {
 	return &InternalServerError{
-		baseError: &baseError{
-			name:     name,
-			message:  msg,
-			grpcCode: internalServerGRPCCode,
-			httpCode: internalServerHTTPCode,
+		&BaseError{
+			Name:     name,
+			Message:  msg,
+			GRPCCode: internalServerGRPCCode,
+			HTTPCode: internalServerHTTPCode,
 		},
 	}
 }
 
 func NewInternalServerErrorWithCodeAndName(msg string, code int, name string) error {
 	return &InternalServerError{
-		baseError: &baseError{
-			code:     code,
-			name:     name,
-			message:  msg,
-			grpcCode: internalServerGRPCCode,
-			httpCode: internalServerHTTPCode,
+		&BaseError{
+			Code:     code,
+			Name:     name,
+			Message:  msg,
+			GRPCCode: internalServerGRPCCode,
+			HTTPCode: internalServerHTTPCode,
 		},
 	}
 }

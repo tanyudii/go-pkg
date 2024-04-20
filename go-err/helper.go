@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	metaKeyErrorCode = "code"
+	metaKeyErrorCode = "Code"
 	metaKeyErrorName = "name"
 )
 
@@ -18,96 +18,89 @@ func FromStatus(s *status.Status) CustomError {
 		return nil
 	}
 
-	base := &baseError{
-		code:     int(s.Code()),
-		name:     s.Message(),
-		grpcCode: s.Code(),
-		httpCode: HTTPStatusFromCode(s.Code()),
-		message:  s.Message(),
+	base := &BaseError{
+		GRPCCode: s.Code(),
+		HTTPCode: HTTPStatusFromCode(s.Code()),
+		Message:  s.Message(),
 	}
 
 	for _, detail := range s.Details() {
+
+		//get error Code & name
 		errInfo, valid := detail.(*errdetails.ErrorInfo)
 		if valid {
 			if codeStr, ok := errInfo.Metadata[metaKeyErrorCode]; ok {
 				if code, err := strconv.Atoi(codeStr); err == nil {
-					base.code = code
+					base.Code = code
 				}
 			}
 			if name, ok := errInfo.Metadata[metaKeyErrorName]; ok {
-				base.name = name
+				base.Name = name
 			}
 			continue
 		}
+
+		//get bad request details
 		badRequest, valid := detail.(*errdetails.BadRequest)
-		if valid {
-			base.fields = make(ErrorField)
+		if valid && len(badRequest.FieldViolations) != 0 {
+			base.Fields = make(ErrorField)
 			for _, field := range badRequest.FieldViolations {
-				base.fields[field.Field] = field.Description
+				base.Fields[field.Field] = field.Description
 			}
+			continue
 		}
 	}
 
 	switch s.Code() {
 	case badRequestGRPCCode:
-		return &BadRequestError{baseError: base}
+		return &BadRequestError{BaseError: base}
 	case notFoundGRPCCode:
-		return &NotFoundError{baseError: base}
+		return &NotFoundError{BaseError: base}
 	case tooManyRequestGRPCCode:
-		return &TooManyRequestError{baseError: base}
+		return &TooManyRequestError{BaseError: base}
 	case unauthenticatedGRPCCode:
-		return &UnauthenticatedError{baseError: base}
+		return &UnauthenticatedError{BaseError: base}
 	case unauthorizedGRPCCode:
-		return &UnauthorizedError{baseError: base}
+		return &UnauthorizedError{BaseError: base}
 	default:
-		return &InternalServerError{baseError: base}
+		return &InternalServerError{BaseError: base}
 	}
 }
 
-func FromResponseError(respErr *ResponseError) error {
-	if respErr == nil ||
-		respErr.Status != ResponseErrorStatus ||
-		respErr.Meta == nil {
+func FromResponseError(r *ResponseError) error {
+	if r == nil ||
+		r.Status != ResponseErrorStatus ||
+		r.Meta == nil {
 		return nil
 	}
 
-	base := &baseError{
-		code:     respErr.Meta.Code,
-		name:     respErr.Meta.Name,
-		message:  respErr.Message,
-		grpcCode: respErr.Meta.GrpcCode,
-		httpCode: respErr.Meta.HttpCode,
-		fields:   respErr.Meta.Fields,
+	base := &BaseError{
+		Code:     r.Meta.Code,
+		Name:     r.Meta.Name,
+		Message:  r.Message,
+		GRPCCode: r.Meta.GrpcCode,
+		HTTPCode: r.Meta.HttpCode,
+		Data:     r.Data,
+		Fields:   r.Fields,
 	}
 
-	switch respErr.Meta.GrpcCode {
+	switch r.Meta.GrpcCode {
 	case badRequestGRPCCode:
-		return &BadRequestError{baseError: base}
+		return &BadRequestError{BaseError: base}
 	case notFoundGRPCCode:
-		return &NotFoundError{baseError: base}
+		return &NotFoundError{BaseError: base}
 	case tooManyRequestGRPCCode:
-		return &TooManyRequestError{baseError: base}
+		return &TooManyRequestError{BaseError: base}
 	case unauthenticatedGRPCCode:
-		return &UnauthenticatedError{baseError: base}
+		return &UnauthenticatedError{BaseError: base}
 	case unauthorizedGRPCCode:
-		return &UnauthorizedError{baseError: base}
+		return &UnauthorizedError{BaseError: base}
 	default:
-		return &InternalServerError{baseError: base}
+		return &InternalServerError{BaseError: base}
 	}
 }
 
-func CustomErrorToMapInterface(err CustomError) map[string]interface{} {
-	obj := make(map[string]interface{})
-	if code := err.GetCode(); code != 0 {
-		obj[metaKeyErrorCode] = code
-	}
-	if name := err.GetName(); name != "" {
-		obj[metaKeyErrorName] = name
-	}
-	return obj
-}
-
-func GetErrorDetailsFromErrorGRPC(err error) []interface{} {
+func GetErrorDetailsFromErrorGRPC(err error) []any {
 	e, ok := status.FromError(err)
 	if !ok {
 		return nil
@@ -123,39 +116,48 @@ func GetErrorGRPCCodeFromErrorGRPC(err error) codes.Code {
 	return e.Code()
 }
 
-func IsErrorCode(err error, code int) bool {
+func GetErrorCode(err error) int {
 	details := GetErrorDetailsFromErrorGRPC(err)
 	if len(details) == 0 {
-		return false
+		return 0
 	}
-	codeStr := strconv.Itoa(code)
 	for _, detail := range details {
 		errInfo, valid := detail.(*errdetails.ErrorInfo)
 		if !valid {
 			continue
 		}
-		if errInfo.Metadata[metaKeyErrorCode] == codeStr {
-			return true
+		if codeStr, ok := errInfo.Metadata[metaKeyErrorCode]; ok {
+			if code, err := strconv.Atoi(codeStr); err == nil {
+				return code
+			}
 		}
 	}
-	return false
+	return 0
+}
+
+func GetErrorName(err error) string {
+	details := GetErrorDetailsFromErrorGRPC(err)
+	if len(details) == 0 {
+		return ""
+	}
+	for _, detail := range details {
+		errInfo, valid := detail.(*errdetails.ErrorInfo)
+		if !valid {
+			continue
+		}
+		if name, ok := errInfo.Metadata[metaKeyErrorName]; ok {
+			return name
+		}
+	}
+	return ""
+}
+
+func IsErrorCode(err error, code int) bool {
+	return GetErrorCode(err) == code
 }
 
 func IsErrorName(err error, name string) bool {
-	details := GetErrorDetailsFromErrorGRPC(err)
-	if len(details) == 0 {
-		return false
-	}
-	for _, detail := range details {
-		errInfo, valid := detail.(*errdetails.ErrorInfo)
-		if !valid {
-			continue
-		}
-		if errInfo.Metadata[metaKeyErrorName] == name {
-			return true
-		}
-	}
-	return false
+	return GetErrorName(err) == name
 }
 
 func HTTPStatusFromCode(code codes.Code) int {

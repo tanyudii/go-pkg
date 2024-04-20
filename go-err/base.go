@@ -7,61 +7,83 @@ import (
 	"strconv"
 )
 
-type baseError struct {
-	code     int
-	name     string
-	message  string
-	grpcCode codes.Code
-	httpCode int
-	fields   ErrorField
+type CustomError interface {
+	Error() string
+	GRPCStatus() *status.Status
+	GetCode() int
+	GetName() string
+	GetGRPCCode() codes.Code
+	GetHTTPCode() int
+	GetFields() ErrorField
+	SetFields(v ErrorField)
+	GetData() any
+	SetData(v any)
 }
 
-func (i *baseError) Error() string {
-	return i.message
+type BaseError struct {
+	Code     int
+	Name     string
+	Message  string
+	GRPCCode codes.Code
+	HTTPCode int
+	Data     any
+	Fields   ErrorField
 }
 
-func (i *baseError) GetCode() int {
-	return i.code
+func (i *BaseError) Error() string {
+	return i.Message
 }
 
-func (i *baseError) GetName() string {
-	return i.name
-}
-
-func (i *baseError) GetGRPCCode() codes.Code {
-	return i.grpcCode
-}
-
-func (i *baseError) GetHTTPCode() int {
-	return i.httpCode
-}
-
-func (i *baseError) GRPCStatus() *status.Status {
-	stats := status.New(i.GetGRPCCode(), i.Error())
-	if customErr := i.GetErrorInfoCustom(); customErr != nil {
+func (i *BaseError) GRPCStatus() *status.Status {
+	stats := status.New(i.GRPCCode, i.Error())
+	if customErr := i.getErrorInfoCustom(); customErr != nil {
 		stats, _ = stats.WithDetails(customErr)
 	}
-	if fields := i.GetBadRequestFields(); fields != nil {
+	if fields := i.getBadRequestFields(); fields != nil {
 		stats, _ = stats.WithDetails(fields)
 	}
 	return stats
 }
 
-func (i *baseError) GetFields() ErrorField {
-	return i.fields
+func (i *BaseError) GetCode() int {
+	return i.Code
 }
 
-func (i *baseError) ToResponseError() *ResponseError {
-	return NewResponseError(i)
+func (i *BaseError) GetName() string {
+	return i.Name
 }
 
-func (i *baseError) GetErrorInfoCustom() *errdetails.ErrorInfo {
+func (i *BaseError) GetGRPCCode() codes.Code {
+	return i.GRPCCode
+}
+
+func (i *BaseError) GetHTTPCode() int {
+	return i.HTTPCode
+}
+
+func (i *BaseError) GetFields() ErrorField {
+	return i.Fields
+}
+
+func (i *BaseError) SetFields(v ErrorField) {
+	i.Fields = v
+}
+
+func (i *BaseError) GetData() any {
+	return i.Data
+}
+
+func (i *BaseError) SetData(v any) {
+	i.Data = v
+}
+
+func (i *BaseError) getErrorInfoCustom() *errdetails.ErrorInfo {
 	metaData := make(map[string]string)
-	if code := i.GetCode(); code != 0 {
-		metaData[metaKeyErrorCode] = strconv.Itoa(code)
+	if i.Code != 0 {
+		metaData[metaKeyErrorCode] = strconv.Itoa(i.Code)
 	}
-	if name := i.GetName(); name != "" {
-		metaData[metaKeyErrorName] = name
+	if i.Name != "" {
+		metaData[metaKeyErrorName] = i.Name
 	}
 	if len(metaData) == 0 {
 		return nil
@@ -69,17 +91,18 @@ func (i *baseError) GetErrorInfoCustom() *errdetails.ErrorInfo {
 	return &errdetails.ErrorInfo{Metadata: metaData}
 }
 
-func (i *baseError) GetBadRequestFields() *errdetails.BadRequest {
-	errFields := i.GetFields()
-	if len(errFields) == 0 {
-		return nil
-	}
-	br := &errdetails.BadRequest{}
-	for attr, msg := range i.GetFields() {
-		br.FieldViolations = append(br.FieldViolations, &errdetails.BadRequest_FieldViolation{
+func (i *BaseError) getBadRequestFields() *errdetails.BadRequest {
+	var violations []*errdetails.BadRequest_FieldViolation
+	for attr, msg := range i.Fields {
+		violations = append(violations, &errdetails.BadRequest_FieldViolation{
 			Field:       attr,
 			Description: msg,
 		})
 	}
-	return br
+	if len(violations) == 0 {
+		return nil
+	}
+	return &errdetails.BadRequest{
+		FieldViolations: violations,
+	}
 }

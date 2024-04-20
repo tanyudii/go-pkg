@@ -12,49 +12,49 @@ const (
 )
 
 type TooManyRequestError struct {
-	*baseError
+	*BaseError
 }
 
 func NewTooManyRequestError(msg string) error {
 	return &TooManyRequestError{
-		baseError: &baseError{
-			message:  msg,
-			grpcCode: tooManyRequestGRPCCode,
-			httpCode: tooManyRequestHTTPCode,
+		BaseError: &BaseError{
+			Message:  msg,
+			GRPCCode: tooManyRequestGRPCCode,
+			HTTPCode: tooManyRequestHTTPCode,
 		},
 	}
 }
 
 func NewTooManyRequestErrorWithCode(msg string, code int) error {
 	return &TooManyRequestError{
-		baseError: &baseError{
-			code:     code,
-			message:  msg,
-			grpcCode: tooManyRequestGRPCCode,
-			httpCode: tooManyRequestHTTPCode,
+		BaseError: &BaseError{
+			Code:     code,
+			Message:  msg,
+			GRPCCode: tooManyRequestGRPCCode,
+			HTTPCode: tooManyRequestHTTPCode,
 		},
 	}
 }
 
 func NewTooManyRequestErrorWithName(msg string, name string) error {
 	return &TooManyRequestError{
-		baseError: &baseError{
-			name:     name,
-			message:  msg,
-			grpcCode: tooManyRequestGRPCCode,
-			httpCode: tooManyRequestHTTPCode,
+		BaseError: &BaseError{
+			Name:     name,
+			Message:  msg,
+			GRPCCode: tooManyRequestGRPCCode,
+			HTTPCode: tooManyRequestHTTPCode,
 		},
 	}
 }
 
 func NewTooManyRequestErrorWithCodeAndName(msg string, code int, name string) error {
 	return &TooManyRequestError{
-		baseError: &baseError{
-			code:     code,
-			name:     name,
-			message:  msg,
-			grpcCode: tooManyRequestGRPCCode,
-			httpCode: tooManyRequestHTTPCode,
+		BaseError: &BaseError{
+			Code:     code,
+			Name:     name,
+			Message:  msg,
+			GRPCCode: tooManyRequestGRPCCode,
+			HTTPCode: tooManyRequestHTTPCode,
 		},
 	}
 }

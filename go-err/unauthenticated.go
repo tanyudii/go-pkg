@@ -12,49 +12,49 @@ const (
 )
 
 type UnauthenticatedError struct {
-	*baseError
+	*BaseError
 }
 
 func NewUnauthenticatedError(msg string) error {
 	return &UnauthenticatedError{
-		baseError: &baseError{
-			message:  msg,
-			grpcCode: unauthenticatedGRPCCode,
-			httpCode: unauthenticatedHTTPCode,
+		&BaseError{
+			Message:  msg,
+			GRPCCode: unauthenticatedGRPCCode,
+			HTTPCode: unauthenticatedHTTPCode,
 		},
 	}
 }
 
 func NewUnauthenticatedErrorWithCode(msg string, code int) error {
 	return &UnauthenticatedError{
-		baseError: &baseError{
-			code:     code,
-			message:  msg,
-			grpcCode: unauthenticatedGRPCCode,
-			httpCode: unauthenticatedHTTPCode,
+		&BaseError{
+			Code:     code,
+			Message:  msg,
+			GRPCCode: unauthenticatedGRPCCode,
+			HTTPCode: unauthenticatedHTTPCode,
 		},
 	}
 }
 
 func NewUnauthenticatedErrorWithName(msg string, name string) error {
 	return &UnauthenticatedError{
-		baseError: &baseError{
-			name:     name,
-			message:  msg,
-			grpcCode: unauthenticatedGRPCCode,
-			httpCode: unauthenticatedHTTPCode,
+		&BaseError{
+			Name:     name,
+			Message:  msg,
+			GRPCCode: unauthenticatedGRPCCode,
+			HTTPCode: unauthenticatedHTTPCode,
 		},
 	}
 }
 
 func NewUnauthenticatedErrorWithCodeAndName(msg string, code int, name string) error {
 	return &UnauthenticatedError{
-		baseError: &baseError{
-			code:     code,
-			name:     name,
-			message:  msg,
-			grpcCode: unauthenticatedGRPCCode,
-			httpCode: unauthenticatedHTTPCode,
+		&BaseError{
+			Code:     code,
+			Name:     name,
+			Message:  msg,
+			GRPCCode: unauthenticatedGRPCCode,
+			HTTPCode: unauthenticatedHTTPCode,
 		},
 	}
 }

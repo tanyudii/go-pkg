@@ -2,6 +2,7 @@ package go_grpc
 
 import (
 	"context"
+	"errors"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -84,12 +85,11 @@ func MuxErrorHandler(_ context.Context, _ *runtime.ServeMux, m runtime.Marshaler
 
 	var resp *goerr.ResponseError
 	if customStatus != nil {
-		resp = customStatus.ToResponseError()
+		resp = goerr.NewResponseError(customStatus)
 	} else {
-		resp = &goerr.ResponseError{
-			Status:  "error",
-			Message: http.StatusText(http.StatusInternalServerError),
-		}
+		var custom goerr.CustomError
+		errors.As(goerr.NewInternalServerError("internal error"), &custom)
+		resp = goerr.NewResponseError(custom)
 	}
 
 	w.Header().Del("Trailer")

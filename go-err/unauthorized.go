@@ -12,50 +12,42 @@ const (
 )
 
 type UnauthorizedError struct {
-	*baseError
+	*BaseError
 }
 
 func NewUnauthorizedError(msg string) error {
-	return &UnauthorizedError{
-		baseError: &baseError{
-			message:  msg,
-			grpcCode: unauthorizedGRPCCode,
-			httpCode: unauthorizedHTTPCode,
-		},
+	return &BaseError{
+		Message:  msg,
+		GRPCCode: unauthorizedGRPCCode,
+		HTTPCode: unauthorizedHTTPCode,
 	}
 }
 
 func NewUnauthorizedErrorWithCode(msg string, code int) error {
-	return &UnauthorizedError{
-		baseError: &baseError{
-			code:     code,
-			message:  msg,
-			grpcCode: unauthorizedGRPCCode,
-			httpCode: unauthorizedHTTPCode,
-		},
+	return &BaseError{
+		Code:     code,
+		Message:  msg,
+		GRPCCode: unauthorizedGRPCCode,
+		HTTPCode: unauthorizedHTTPCode,
 	}
 }
 
 func NewUnauthorizedErrorWithName(msg string, name string) error {
-	return &UnauthorizedError{
-		baseError: &baseError{
-			name:     name,
-			message:  msg,
-			grpcCode: unauthorizedGRPCCode,
-			httpCode: unauthorizedHTTPCode,
-		},
+	return &BaseError{
+		Name:     name,
+		Message:  msg,
+		GRPCCode: unauthorizedGRPCCode,
+		HTTPCode: unauthorizedHTTPCode,
 	}
 }
 
 func NewUnauthorizedErrorWithCodeAndName(msg string, code int, name string) error {
-	return &UnauthorizedError{
-		baseError: &baseError{
-			code:     code,
-			name:     name,
-			message:  msg,
-			grpcCode: unauthorizedGRPCCode,
-			httpCode: unauthorizedHTTPCode,
-		},
+	return &BaseError{
+		Code:     code,
+		Name:     name,
+		Message:  msg,
+		GRPCCode: unauthorizedGRPCCode,
+		HTTPCode: unauthorizedHTTPCode,
 	}
 }
 
@@ -67,6 +59,6 @@ func IsUnauthorizedError(err error) bool {
 	if IsUnauthenticatedErrorGRPC(err) {
 		return true
 	}
-	var expectedErr *UnauthorizedError
+	var expectedErr UnauthorizedError
 	return errors.As(err, &expectedErr)
 }

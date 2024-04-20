@@ -12,49 +12,49 @@ const (
 )
 
 type NotFoundError struct {
-	*baseError
+	*BaseError
 }
 
 func NewNotFoundError(msg string) error {
 	return &NotFoundError{
-		baseError: &baseError{
-			message:  msg,
-			grpcCode: notFoundGRPCCode,
-			httpCode: notFoundHTTPCode,
+		&BaseError{
+			Message:  msg,
+			GRPCCode: notFoundGRPCCode,
+			HTTPCode: notFoundHTTPCode,
 		},
 	}
 }
 
 func NewNotFoundErrorWithCode(msg string, code int) error {
 	return &NotFoundError{
-		baseError: &baseError{
-			code:     code,
-			message:  msg,
-			grpcCode: notFoundGRPCCode,
-			httpCode: notFoundHTTPCode,
+		&BaseError{
+			Code:     code,
+			Message:  msg,
+			GRPCCode: notFoundGRPCCode,
+			HTTPCode: notFoundHTTPCode,
 		},
 	}
 }
 
 func NewNotFoundErrorWithName(msg string, name string) error {
 	return &NotFoundError{
-		baseError: &baseError{
-			name:     name,
-			message:  msg,
-			grpcCode: notFoundGRPCCode,
-			httpCode: notFoundHTTPCode,
+		&BaseError{
+			Name:     name,
+			Message:  msg,
+			GRPCCode: notFoundGRPCCode,
+			HTTPCode: notFoundHTTPCode,
 		},
 	}
 }
 
 func NewNotFoundErrorWithCodeAndName(msg string, code int, name string) error {
 	return &NotFoundError{
-		baseError: &baseError{
-			code:     code,
-			name:     name,
-			message:  msg,
-			grpcCode: notFoundGRPCCode,
-			httpCode: notFoundHTTPCode,
+		&BaseError{
+			Code:     code,
+			Name:     name,
+			Message:  msg,
+			GRPCCode: notFoundGRPCCode,
+			HTTPCode: notFoundHTTPCode,
 		},
 	}
 }
