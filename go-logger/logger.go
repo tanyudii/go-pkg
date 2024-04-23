@@ -16,7 +16,12 @@ func GetLogger() *logrus.Logger {
 	if logger != nil {
 		return logger
 	}
-	return logrus.New()
+	log := logrus.New()
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
+	return log
 }
 
 func WithField(key string, value interface{}) *logrus.Entry {
