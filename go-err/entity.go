@@ -29,7 +29,7 @@ type ResponseError struct {
 }
 
 type ErrorMeta struct {
-	Code     int        `json:"Code,omitempty"`
+	Code     int        `json:"code,omitempty"`
 	Name     string     `json:"name,omitempty"`
 	GrpcCode codes.Code `json:"grpcCode,omitempty"`
 	HttpCode int        `json:"httpCode,omitempty"`

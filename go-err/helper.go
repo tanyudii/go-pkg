@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	metaKeyErrorCode = "Code"
+	metaKeyErrorCode = "code"
 	metaKeyErrorName = "name"
 )
 
