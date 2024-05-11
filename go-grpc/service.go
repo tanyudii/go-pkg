@@ -236,6 +236,7 @@ func (s *service) initConfigRestServeMuxOpts() {
 			UnmarshalOptions: protojson.UnmarshalOptions{},
 			MarshalOptions: protojson.MarshalOptions{
 				UseEnumNumbers:    true,
+				UseProtoNames:     true,
 				EmitUnpopulated:   true,
 				EmitDefaultValues: true,
 			},
