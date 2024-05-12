@@ -32,31 +32,6 @@ func NewValidator(args ...ConfigFunc) Service {
 	return v
 }
 
-func (s *service) Struct(val interface{}) error {
-	return s.StructWithLang(DefaultLocaleName, val)
-}
-
-func (s *service) StructWithCtx(ctx context.Context, val interface{}) error {
-	lang := gotex.GetAcceptLanguage(ctx, DefaultLocaleName)
-	return s.StructWithLang(lang, val)
-}
-
-func (s *service) StructWithLang(lang string, val interface{}) error {
-	err := s.validate.Struct(val)
-	if err == nil {
-		return nil
-	}
-	translatorFn := s.getTranslator(lang)
-	fields := goerr.ErrorField{}
-	var errs validator.ValidationErrors
-	if errors.As(err, &errs) {
-		for _, e := range errs {
-			fields[s.transformField(e.StructNamespace())] = e.Translate(translatorFn)
-		}
-	}
-	return goerr.NewBadRequestErrorUsingFieldsOrNil(fields)
-}
-
 func (s *service) init() {
 	s.initUni()
 
@@ -86,6 +61,31 @@ func (s *service) initUni() {
 	}
 }
 
+func (s *service) Struct(val interface{}) error {
+	return s.StructWithLang(DefaultLocaleName, val)
+}
+
+func (s *service) StructWithCtx(ctx context.Context, val interface{}) error {
+	return s.StructWithLang(gotex.GetAcceptLanguage(ctx, DefaultLocaleName), val)
+}
+
+func (s *service) StructWithLang(lang string, val interface{}) error {
+	err := s.validate.Struct(val)
+	if err == nil {
+		return nil
+	}
+	fields := make(goerr.ErrorField)
+	translatorFn := s.getTranslator(lang)
+	var errs validator.ValidationErrors
+	if errors.As(err, &errs) {
+		for _, e := range errs {
+			realNs := strings.Split(e.StructNamespace(), ".")[1:]
+			fields[s.getFieldName(val, realNs)] = e.Translate(translatorFn)
+		}
+	}
+	return goerr.NewBadRequestErrorUsingFieldsOrNil(fields)
+}
+
 func (s *service) getTranslator(localeName string) ut.Translator {
 	transFn, ok := s.uni.GetTranslator(localeName)
 	if !ok {
@@ -94,17 +94,57 @@ func (s *service) getTranslator(localeName string) ut.Translator {
 	return transFn
 }
 
-func (s *service) transformField(field string) string {
-	rgx, _ := regexp.Compile("\\[(.*?)]")
-	fields := strings.Split(field, ".")
-	var attrs []string
-	for _, attr := range fields[1:] {
-		match := rgx.FindStringSubmatch(attr)
-		if len(match) == 2 {
-			attrs = append(attrs, strcase.ToLowerCamel(rgx.ReplaceAllString(attr, "")), match[1])
+func (s *service) getFieldName(val any, fields []string) string {
+	valClone := val
+	result := s.constructFieldName(valClone, fields)
+	return result
+}
+
+func (s *service) constructFieldName(val any, fields []string) string {
+	var fieldName, result string
+	nFields := len(fields)
+	for i := 0; i < nFields; i++ {
+		field := fields[i]
+		if isSlice, parent, pos := s.isSliceField(field); isSlice {
+			fieldName, val = s.extractFieldName(val, parent)
+			fieldName += "." + pos
 		} else {
-			attrs = append(attrs, strcase.ToLowerCamel(attr))
+			fieldName, val = s.extractFieldName(val, field)
+		}
+		result += fieldName
+		if nFields > i+1 {
+			result += "."
 		}
 	}
-	return strings.Join(attrs, ".")
+	return result
+}
+
+func (s *service) isSliceField(input string) (bool, string, string) {
+	rgx := regexp.MustCompile(`([^\[]+)\[(\d+)\]`)
+	match := rgx.FindStringSubmatch(input)
+	if len(match) == 3 {
+		return true, match[1], match[2]
+	}
+	return false, input, ""
+}
+
+func (s *service) extractFieldName(i interface{}, original string) (string, any) {
+	reflected := reflect.ValueOf(i)
+	switch reflected.Kind() {
+	case reflect.Ptr:
+		reflected = reflected.Elem()
+	case reflect.Struct:
+		break
+	case reflect.Slice:
+		return s.extractFieldName(reflected.Index(0).Interface(), original)
+	default:
+		return strcase.ToLowerCamel(original), i
+	}
+	if field, ok := reflected.Type().FieldByName(original); ok {
+		i = reflected.FieldByName(original).Interface()
+		if tag := field.Tag.Get("field"); tag != "" {
+			return tag, i
+		}
+	}
+	return strcase.ToLowerCamel(original), i
 }
