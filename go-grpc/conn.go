@@ -34,6 +34,7 @@ func getDialOpts(s bool) []grpc.DialOption {
 	}
 	return []grpc.DialOption{
 		grpc.WithTransportCredentials(creds),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(defaultMaxCallRcvMsgSize),
 			grpc.MaxCallSendMsgSize(defaultMaxCallSendMsgSize),
