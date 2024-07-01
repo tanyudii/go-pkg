@@ -40,6 +40,16 @@ func SearchLikeRight(qb *gorm.DB, search string, columns []string) *gorm.DB {
 	return qb
 }
 
+func SearchEqual(qb *gorm.DB, search string, columns []string) *gorm.DB {
+	if search == "" || len(columns) == 0 {
+		return qb
+	}
+	for i := range columns {
+		qb = qb.Or(columns[i]+" = ?", search)
+	}
+	return qb
+}
+
 type MapSortableColumn map[int32]string
 
 func Sort(sort int32, mapSortable MapSortableColumn) Scope {
