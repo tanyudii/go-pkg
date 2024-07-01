@@ -235,7 +235,6 @@ func (s *service) initConfigRestServeMuxOpts() {
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 			UnmarshalOptions: protojson.UnmarshalOptions{},
 			MarshalOptions: protojson.MarshalOptions{
-				UseEnumNumbers:    true,
 				UseProtoNames:     true,
 				EmitUnpopulated:   true,
 				EmitDefaultValues: true,
