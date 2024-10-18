@@ -21,6 +21,7 @@ type Config struct {
 	onlyJSON           bool
 	registerReflection bool
 	tls                bool
+	discardUnknown     bool
 	restServeMuxOpts   []runtime.ServeMuxOption
 }
 
@@ -77,6 +78,12 @@ func RegisterReflection(r bool) ConfigFunc {
 func WithTLS(tls bool) ConfigFunc {
 	return func(c *Config) {
 		c.tls = tls
+	}
+}
+
+func DiscardUnknown(o bool) ConfigFunc {
+	return func(c *Config) {
+		c.discardUnknown = o
 	}
 }
 

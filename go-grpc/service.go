@@ -233,7 +233,9 @@ func (s *service) initConfigRestServeMuxOpts() {
 		runtime.WithForwardResponseOption(MuxHandleRoutingRedirect),
 		runtime.WithHealthEndpointAt(grpc_health_v1.NewHealthClient(ClientConn(":"+s.cfg.gRPCPort)), "/_health"),
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
-			UnmarshalOptions: protojson.UnmarshalOptions{},
+			UnmarshalOptions: protojson.UnmarshalOptions{
+				DiscardUnknown: s.cfg.discardUnknown,
+			},
 			MarshalOptions: protojson.MarshalOptions{
 				UseProtoNames:     true,
 				EmitUnpopulated:   true,
