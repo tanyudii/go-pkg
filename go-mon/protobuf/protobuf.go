@@ -177,14 +177,14 @@ func ToBytesPointer(val *wrappers.BytesValue) *[]byte {
 	return pointer.Val(val.Value)
 }
 
-func ToPbStruct(val map[string]interface{}) *structpb.Struct {
+func ToPbStruct(val map[string]any) *structpb.Struct {
 	jsonVal, _ := json.Marshal(val)
 	valPb := structpb.Struct{}
 	_ = json.Unmarshal(jsonVal, &valPb)
 	return &valPb
 }
 
-func ToMapInterface(val *structpb.Struct) map[string]interface{} {
+func ToMapInterface(val *structpb.Struct) map[string]any {
 	if val == nil {
 		return nil
 	}

@@ -19,7 +19,7 @@ func StringRand(size int) (string, error) {
 	}
 	alpha := "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 	buf := make([]byte, size)
-	for i := 0; i < size; i++ {
+	for i := range size {
 		buf[i] = alpha[rand.Intn(len(alpha))]
 	}
 	return string(buf), nil

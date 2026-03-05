@@ -7,7 +7,7 @@ import (
 
 type CustomTime time.Time
 
-func (t *CustomTime) Scan(v interface{}) error {
+func (t *CustomTime) Scan(v any) error {
 	vt, err := time.Parse("2006-01-02 15:04:05", string(v.([]byte)))
 	if err != nil {
 		return err

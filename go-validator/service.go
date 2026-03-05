@@ -15,9 +15,9 @@ import (
 )
 
 type Service interface {
-	Struct(val interface{}) error
-	StructWithCtx(ctx context.Context, val interface{}) error
-	StructWithLang(lang string, val interface{}) error
+	Struct(val any) error
+	StructWithCtx(ctx context.Context, val any) error
+	StructWithLang(lang string, val any) error
 }
 
 type service struct {
@@ -61,15 +61,15 @@ func (s *service) initUni() {
 	}
 }
 
-func (s *service) Struct(val interface{}) error {
+func (s *service) Struct(val any) error {
 	return s.StructWithLang(DefaultLocaleName, val)
 }
 
-func (s *service) StructWithCtx(ctx context.Context, val interface{}) error {
+func (s *service) StructWithCtx(ctx context.Context, val any) error {
 	return s.StructWithLang(gotex.GetAcceptLanguage(ctx, DefaultLocaleName), val)
 }
 
-func (s *service) StructWithLang(lang string, val interface{}) error {
+func (s *service) StructWithLang(lang string, val any) error {
 	err := s.validate.Struct(val)
 	if err == nil {
 		return nil
@@ -103,7 +103,7 @@ func (s *service) getFieldName(val any, fields []string) string {
 func (s *service) constructFieldName(val any, fields []string) string {
 	var fieldName, result string
 	nFields := len(fields)
-	for i := 0; i < nFields; i++ {
+	for i := range nFields {
 		field := fields[i]
 		if isSlice, parent, pos := s.isSliceField(field); isSlice {
 			fieldName, val = s.extractFieldName(val, parent)
@@ -128,7 +128,7 @@ func (s *service) isSliceField(input string) (bool, string, string) {
 	return false, input, ""
 }
 
-func (s *service) extractFieldName(i interface{}, original string) (string, any) {
+func (s *service) extractFieldName(i any, original string) (string, any) {
 	reflected := reflect.ValueOf(i)
 	switch reflected.Kind() {
 	case reflect.Ptr:

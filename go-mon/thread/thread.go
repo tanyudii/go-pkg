@@ -28,7 +28,7 @@ func GenericGetContent[T any](e Event) T {
 	return e.GetContent().(T)
 }
 
-func NewEvent(name string, content interface{}, err error) Event {
+func NewEvent(name string, content any, err error) Event {
 	return &event{
 		name:    name,
 		content: content,
@@ -61,7 +61,7 @@ func executeThreads(threads []Thread, ignoreError bool) (map[string]Event, error
 			chanEvent <- thread.Execute()
 		}(t)
 	}
-	for i := 0; i < totalThread; i++ {
+	for range totalThread {
 		e := <-chanEvent
 		if !ignoreError && e.GetErr() != nil {
 			return nil, e.GetErr()

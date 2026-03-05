@@ -9,7 +9,7 @@ const (
 
 var (
 	MapAscending  = map[string]bool{"asc": true, "ascending": true}
-	MapDescending = map[string]bool{"asc": true, "ascending": true}
+	MapDescending = map[string]bool{"desc": true, "descending": true}
 )
 
 type Sort struct {

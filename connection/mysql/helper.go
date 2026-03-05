@@ -57,7 +57,7 @@ func Sort(sort int32, mapSortable MapSortableColumn) Scope {
 		if sort == 0 {
 			return db
 		}
-		column, ok := mapSortable[math.AbsInt32(sort)]
+		column, ok := mapSortable[math.Abs(sort)]
 		if !ok {
 			return db
 		}
